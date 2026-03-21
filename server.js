@@ -11,16 +11,30 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 8080;
 const JWT_SECRET = process.env.JWT_SECRET || "dev_secret_change_me";
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL);
+let databaseReady = false;
+let databaseErrorMessage = null;
 
-if (!process.env.DATABASE_URL) {
-  console.error("DATABASE_URL is required");
-  process.exit(1);
+let databaseUrl = process.env.DATABASE_URL || "";
+
+try {
+  const parsedDatabaseUrl = new URL(databaseUrl);
+  // Keep SSL behavior controlled by Node `ssl` object below.
+  parsedDatabaseUrl.searchParams.delete("sslmode");
+  parsedDatabaseUrl.searchParams.delete("sslcert");
+  parsedDatabaseUrl.searchParams.delete("sslkey");
+  parsedDatabaseUrl.searchParams.delete("sslrootcert");
+  databaseUrl = parsedDatabaseUrl.toString();
+} catch (_error) {
+  // If parsing fails, use raw value and let `pg` handle it.
 }
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
-});
+const pool = hasDatabaseUrl
+  ? new Pool({
+      connectionString: databaseUrl,
+      ssl: { rejectUnauthorized: false }
+    })
+  : null;
 
 app.use(cors());
 app.use(express.json());
@@ -130,6 +144,18 @@ function ownerRequired(req, res, next) {
   return next();
 }
 
+function databaseRequired(_req, res, next) {
+  if (!databaseReady) {
+    return res.status(503).json({
+      message: "Database unavailable",
+      databaseReady: false,
+      error: databaseErrorMessage
+    });
+  }
+
+  return next();
+}
+
 function mapProperty(row) {
   return {
     id: Number(row.id),
@@ -172,6 +198,10 @@ function mapBooking(row) {
 }
 
 async function bootstrapDatabase() {
+  if (!pool) {
+    throw new Error("DATABASE_URL is missing");
+  }
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS users (
       id BIGSERIAL PRIMARY KEY,
@@ -263,10 +293,15 @@ async function bootstrapDatabase() {
 }
 
 app.get("/api/health", (_req, res) => {
-  res.json({ ok: true, service: "rosebooking-api" });
+  res.json({
+    ok: true,
+    service: "rosebooking-api",
+    databaseReady,
+    databaseError: databaseErrorMessage
+  });
 });
 
-app.post("/api/auth/register", async (req, res) => {
+app.post("/api/auth/register", databaseRequired, async (req, res) => {
   try {
     const { name, email, password, role } = req.body;
 
@@ -309,7 +344,7 @@ app.post("/api/auth/register", async (req, res) => {
   }
 });
 
-app.post("/api/auth/login", async (req, res) => {
+app.post("/api/auth/login", databaseRequired, async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -343,7 +378,7 @@ app.post("/api/auth/login", async (req, res) => {
   }
 });
 
-app.get("/api/me", authRequired, async (req, res) => {
+app.get("/api/me", authRequired, databaseRequired, async (req, res) => {
   try {
     const result = await pool.query("SELECT id, name, email, role FROM users WHERE id = $1;", [req.user.id]);
 
@@ -357,7 +392,7 @@ app.get("/api/me", authRequired, async (req, res) => {
   }
 });
 
-app.get("/api/properties", async (_req, res) => {
+app.get("/api/properties", databaseRequired, async (_req, res) => {
   try {
     const result = await pool.query("SELECT * FROM properties ORDER BY id ASC;");
     return res.json(result.rows.map(mapProperty));
@@ -366,7 +401,7 @@ app.get("/api/properties", async (_req, res) => {
   }
 });
 
-app.get("/api/properties/:id", async (req, res) => {
+app.get("/api/properties/:id", databaseRequired, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM properties WHERE id = $1;", [Number(req.params.id)]);
 
@@ -380,7 +415,7 @@ app.get("/api/properties/:id", async (req, res) => {
   }
 });
 
-app.post("/api/properties", authRequired, ownerRequired, async (req, res) => {
+app.post("/api/properties", authRequired, databaseRequired, ownerRequired, async (req, res) => {
   try {
     const {
       title,
@@ -433,7 +468,7 @@ app.post("/api/properties", authRequired, ownerRequired, async (req, res) => {
   }
 });
 
-app.delete("/api/properties/:id", authRequired, ownerRequired, async (req, res) => {
+app.delete("/api/properties/:id", authRequired, databaseRequired, ownerRequired, async (req, res) => {
   try {
     const propertyId = Number(req.params.id);
 
@@ -452,7 +487,7 @@ app.delete("/api/properties/:id", authRequired, ownerRequired, async (req, res) 
   }
 });
 
-app.post("/api/bookings", authRequired, async (req, res) => {
+app.post("/api/bookings", authRequired, databaseRequired, async (req, res) => {
   try {
     const { propertyId, checkin, checkout, travellers } = req.body;
 
@@ -518,7 +553,7 @@ app.post("/api/bookings", authRequired, async (req, res) => {
   }
 });
 
-app.get("/api/bookings/mine", authRequired, async (req, res) => {
+app.get("/api/bookings/mine", authRequired, databaseRequired, async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM bookings WHERE customer_email = $1 ORDER BY created_at DESC;",
@@ -530,7 +565,7 @@ app.get("/api/bookings/mine", authRequired, async (req, res) => {
   }
 });
 
-app.get("/api/bookings/incoming", authRequired, ownerRequired, async (req, res) => {
+app.get("/api/bookings/incoming", authRequired, databaseRequired, ownerRequired, async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT * FROM bookings WHERE owner_email = $1 ORDER BY created_at DESC;",
@@ -542,7 +577,7 @@ app.get("/api/bookings/incoming", authRequired, ownerRequired, async (req, res) 
   }
 });
 
-app.delete("/api/bookings/:id", authRequired, async (req, res) => {
+app.delete("/api/bookings/:id", authRequired, databaseRequired, async (req, res) => {
   try {
     const bookingId = Number(req.params.id);
 
@@ -567,11 +602,17 @@ app.get("/", (_req, res) => {
 
 bootstrapDatabase()
   .then(() => {
+    databaseReady = true;
+    databaseErrorMessage = null;
+    console.log("Database initialized successfully");
+  })
+  .catch((error) => {
+    databaseReady = false;
+    databaseErrorMessage = error.message;
+    console.error("Failed to initialize database", error);
+  })
+  .finally(() => {
     app.listen(PORT, () => {
       console.log(`RoseBooking API running on port ${PORT}`);
     });
-  })
-  .catch((error) => {
-    console.error("Failed to initialize database", error);
-    process.exit(1);
   });
