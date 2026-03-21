@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RoseBooking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">RoseBooking</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#annonces">Listings</a>
+        <a href="owner.html" data-nav-owner>Owner Space</a>
+        <a href="reservations.html">My Bookings</a>
+        <a href="profile.html" data-nav-profile>My Profile</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" data-nav-login>Login</a>
+        <button type="button" class="btn nav-logout-btn" data-nav-logout hidden>Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero" id="accueil">
+    <div class="container hero-content">
+      <div class="hero-text">
+        <p class="tag">Premium Vacation Rental</p>
+        <h1>Find an exceptional stay</h1>
+        <p>
+          A Booking-inspired site with a modern, clean and rose style.
+        </p>
+        <p id="welcomeUser" class="welcome-user"></p>
+
+        <form class="search-box" id="searchForm">
+          <input type="text" id="cityInput" placeholder="Destination: Cannes, Nice..." />
+          <input type="number" id="guestInput" placeholder="Travelers" min="1" />
+          <button type="submit">Search</button>
+        </form>
+      </div>
+
+      <div class="hero-card">
+        <h2>Premium Vacation</h2>
+        <p>
+          Villas, lofts and prestigious homes in the most beautiful destinations.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="listings-section" id="annonces">
+    <div class="container">
+      <div class="section-title">
+        <p class="tag">Selection</p>
+        <h2>Our Properties</h2>
+      </div>
+
+      <div class="cards" id="cardsContainer"></div>
+    </div>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="container contact-box">
+      <h2>Contact</h2>
+      <p>Email: contact@rosebooking.fr</p>
+      <p>Phone: 06 00 00 00 00</p>
+    </div>
+  </section>
+
+  <script src="api.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

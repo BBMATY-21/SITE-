@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - RoseBooking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">RoseBooking</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#annonces">Listings</a>
+        <a href="owner.html" data-nav-owner>Owner Space</a>
+        <a href="reservations.html">My Bookings</a>
+        <a href="profile.html" data-nav-profile>My Profile</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" data-nav-login>Login</a>
+        <button type="button" class="btn nav-logout-btn" data-nav-logout hidden>Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="login-page">
+    <div class="container">
+      <div class="login-card">
+        <p class="tag">Authentication</p>
+        <h1>Create your account or sign in</h1>
+        <p class="login-text">
+          This is a simulated authentication flow with roles.
+        </p>
+
+        <p id="accountStatus" class="account-status"></p>
+
+        <div class="auth-grid">
+          <section class="auth-box">
+            <h2>Sign up</h2>
+
+            <form id="registerForm" class="login-form">
+              <label>
+                Name
+                <input type="text" id="registerName" placeholder="Your first name" required />
+              </label>
+
+              <label>
+                Email
+                <input type="email" id="registerEmail" placeholder="you@email.com" required />
+              </label>
+
+              <label>
+                Password
+                <input type="password" id="registerPassword" placeholder="At least 6 characters" required />
+              </label>
+
+              <label>
+                Role
+                <select id="registerRole" class="auth-select" required>
+                  <option value="traveler">Traveler</option>
+                  <option value="owner">Owner</option>
+                </select>
+              </label>
+
+              <button type="submit" class="btn login-btn">Create account</button>
+            </form>
+
+            <p id="registerMessage" class="login-message"></p>
+          </section>
+
+          <section class="auth-box">
+            <h2>Sign in</h2>
+
+            <form id="loginForm" class="login-form">
+              <label>
+                Email
+                <input type="email" id="loginEmail" placeholder="you@email.com" required />
+              </label>
+
+              <label>
+                Password
+                <input type="password" id="loginPassword" placeholder="Your password" required />
+              </label>
+
+              <button type="submit" class="btn login-btn">Log in</button>
+            </form>
+
+            <p id="loginMessage" class="login-message"></p>
+
+            <button id="logoutBtn" class="btn logout-btn" type="button">
+              Log out
+            </button>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="login.js"></script>
+</body>
+</html>

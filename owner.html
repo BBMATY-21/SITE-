@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Owner Space - RoseBooking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">RoseBooking</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#annonces">Listings</a>
+        <a href="owner.html" data-nav-owner>Owner Space</a>
+        <a href="reservations.html">My Bookings</a>
+        <a href="profile.html" data-nav-profile>My Profile</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" data-nav-login>Login</a>
+        <button type="button" class="btn nav-logout-btn" data-nav-logout hidden>Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="owner-page">
+    <div class="container">
+      <div class="owner-top">
+        <div>
+          <p class="tag">Owner Space</p>
+          <h1>Manage your properties</h1>
+          <p id="ownerWelcome" class="owner-welcome"></p>
+        </div>
+      </div>
+
+      <section class="owner-grid">
+        <div class="owner-form-box">
+          <h2>Add a property</h2>
+
+          <form id="ownerForm" class="owner-form">
+            <label>
+              Title
+              <input type="text" id="title" placeholder="Villa Rose Prestige" required />
+            </label>
+
+            <label>
+              City
+              <input type="text" id="city" placeholder="Cannes" required />
+            </label>
+
+            <label>
+              Country
+              <input type="text" id="country" placeholder="France" required />
+            </label>
+
+            <label>
+              Price per night
+              <input type="number" id="price" placeholder="250" min="1" required />
+            </label>
+
+            <label>
+              Max travelers
+              <input type="number" id="guests" placeholder="4" min="1" required />
+            </label>
+
+            <label>
+              Bedrooms
+              <input type="number" id="bedrooms" placeholder="2" min="1" required />
+            </label>
+
+            <label>
+              Bathrooms
+              <input type="number" id="bathrooms" placeholder="1" min="1" required />
+            </label>
+
+            <label>
+              Image link
+              <input type="text" id="image" placeholder="https://..." required />
+            </label>
+
+            <label>
+              Description
+              <textarea id="description" placeholder="Describe your property..." required></textarea>
+            </label>
+
+            <label>
+              Amenities
+              <input type="text" id="amenities" placeholder="Wi-Fi, Pool, Parking" required />
+            </label>
+
+            <button type="submit" class="btn owner-btn">Add property</button>
+          </form>
+
+          <p id="ownerMessage" class="owner-message"></p>
+        </div>
+
+        <div class="owner-list-box">
+          <div class="owner-stats">
+            <div class="stat-card">
+              <strong id="ownerPropertyCount">0</strong>
+              <span>properties added</span>
+            </div>
+            <div class="stat-card">
+              <strong id="ownerBookingCount">0</strong>
+              <span>bookings received</span>
+            </div>
+          </div>
+
+          <h2>My properties</h2>
+          <div id="ownerPropertiesList" class="owner-properties-list"></div>
+
+          <h2 class="owner-bookings-title">Incoming bookings</h2>
+          <div id="ownerBookingsList" class="owner-bookings-list"></div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="owner.js"></script>
+</body>
+</html>

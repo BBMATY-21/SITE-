@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Bookings - RoseBooking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">RoseBooking</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#annonces">Listings</a>
+        <a href="owner.html" data-nav-owner>Owner Space</a>
+        <a href="reservations.html">My Bookings</a>
+        <a href="profile.html" data-nav-profile>My Profile</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" data-nav-login>Login</a>
+        <button type="button" class="btn nav-logout-btn" data-nav-logout hidden>Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="reservations-page">
+    <div class="container">
+      <div class="reservations-top">
+        <p class="tag">Bookings</p>
+        <h1>My Bookings</h1>
+        <p id="reservationsWelcome" class="reservations-welcome"></p>
+      </div>
+
+      <div id="reservationsList" class="reservations-list"></div>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="reservation.js"></script>
+</body>
+</html>

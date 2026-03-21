@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile - RoseBooking</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="header">
+    <div class="container nav">
+      <div class="logo">RoseBooking</div>
+      <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html#annonces">Listings</a>
+        <a href="owner.html" data-nav-owner>Owner Space</a>
+        <a href="reservations.html">My Bookings</a>
+        <a href="profile.html" data-nav-profile>My Profile</a>
+        <a href="index.html#contact">Contact</a>
+        <a href="login.html" data-nav-login>Login</a>
+        <button type="button" class="btn nav-logout-btn" data-nav-logout hidden>Log out</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="profile-page">
+    <div class="container">
+      <div class="profile-card" id="profileCard">
+        <p class="tag">Profile</p>
+        <h1>My Account</h1>
+        <p id="profileMessage" class="profile-message"></p>
+
+        <div id="profileContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="api.js"></script>
+  <script src="auth-ui.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

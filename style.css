@@ -1,0 +1,687 @@
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap");
+
+:root {
+  --bg: #f6f2ea;
+  --bg-soft: #fcfaf6;
+  --surface: rgba(255, 255, 255, 0.78);
+  --surface-strong: rgba(255, 255, 255, 0.92);
+  --text: #1e1c18;
+  --muted: #5d564b;
+  --accent: #9b7a47;
+  --accent-dark: #6f582f;
+  --border: rgba(93, 77, 47, 0.16);
+  --shadow: 0 20px 45px rgba(53, 43, 26, 0.14);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 15% -10%, #fff8de 0%, transparent 42%),
+    radial-gradient(circle at 90% 0%, #f2e6cf 0%, transparent 34%),
+    linear-gradient(180deg, #f4efe3 0%, #f8f4ec 42%, #fbf9f4 100%);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-bottom: 1px solid var(--border);
+  background: rgba(248, 243, 234, 0.86);
+  backdrop-filter: blur(12px);
+}
+
+.nav {
+  min-height: 78px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+
+.logo {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2rem;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  color: #2f2616;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+nav a {
+  padding: 8px 0;
+  color: #3d3426;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+nav a:hover {
+  color: var(--accent-dark);
+}
+
+.nav-logout-btn {
+  padding: 8px 12px;
+  font-size: 0.86rem;
+  border-radius: 10px;
+}
+
+.hero {
+  padding: 80px 0 56px;
+}
+
+.hero-content {
+  display: grid;
+  grid-template-columns: 1.16fr 0.84fr;
+  gap: 30px;
+  align-items: center;
+}
+
+.tag {
+  margin: 0 0 10px;
+  color: var(--accent-dark);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: 0.73rem;
+}
+
+.hero h1,
+.detail-left h1,
+.login-card h1,
+.owner-top h1,
+.reservations-top h1,
+.section-title h2,
+.contact-box h2 {
+  font-family: "Cormorant Garamond", serif;
+  letter-spacing: 0.01em;
+}
+
+.hero h1 {
+  margin: 0 0 14px;
+  line-height: 1.04;
+  font-size: clamp(2.7rem, 6vw, 4.9rem);
+}
+
+.hero p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 1.02rem;
+}
+
+.search-box {
+  margin-top: 26px;
+  display: grid;
+  grid-template-columns: 1fr 180px 160px;
+  gap: 12px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: var(--surface);
+}
+
+.search-box input,
+.search-box button,
+.login-form input,
+.booking-form input,
+.owner-form input,
+.owner-form textarea {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #d6c4a8;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+  font-size: 0.98rem;
+}
+
+.search-box input,
+.login-form input,
+.booking-form input,
+.owner-form input {
+  height: 48px;
+  padding: 0 14px;
+}
+
+.search-box button,
+.owner-btn,
+.login-btn,
+.booking-btn {
+  border: none;
+  color: white;
+  font-weight: 800;
+  cursor: pointer;
+  background: linear-gradient(135deg, #b39157, #80602f);
+}
+
+.search-box button:hover,
+.owner-btn:hover,
+.login-btn:hover,
+.booking-btn:hover {
+  background: linear-gradient(135deg, #c4a36a, #8a6935);
+}
+
+.hero-card {
+  padding: 32px;
+  border-radius: var(--radius-xl);
+  background:
+    linear-gradient(160deg, rgba(45, 35, 16, 0.95), rgba(93, 70, 33, 0.92));
+  color: #f7f0e4;
+  box-shadow: var(--shadow);
+}
+
+.hero-card h2 {
+  margin: 0 0 10px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+}
+
+.hero-card p {
+  color: rgba(255, 250, 242, 0.86);
+}
+
+.welcome-user,
+.owner-welcome,
+.reservations-welcome,
+.login-message,
+.owner-message,
+.booking-message {
+  margin-top: 14px;
+  color: #5f4723;
+  font-weight: 700;
+}
+
+.listings-section,
+.property-page,
+.owner-page,
+.reservations-page,
+.login-page {
+  padding: 32px 0 86px;
+}
+
+.section-title h2 {
+  margin: 0;
+  font-size: clamp(2rem, 4.2vw, 3rem);
+}
+
+.cards {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.card,
+.detail-box,
+.booking-panel,
+.login-card,
+.owner-form-box,
+.owner-list-box,
+.contact-box,
+.empty,
+.reservation-card,
+.owner-property-card,
+.owner-booking-card {
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: var(--surface-strong);
+}
+
+.card {
+  overflow: hidden;
+}
+
+.card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  display: block;
+}
+
+.card-body,
+.reservation-body,
+.owner-property-body,
+.owner-booking-body {
+  padding: 20px;
+}
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.card h3,
+.owner-property-body h3,
+.owner-booking-body h3,
+.reservation-body h3 {
+  margin: 6px 0;
+  font-size: 1.25rem;
+  font-family: "Cormorant Garamond", serif;
+}
+
+.location {
+  margin: 0;
+  color: #7d6132;
+  font-weight: 800;
+}
+
+.rating {
+  padding: 7px 10px;
+  border-radius: 999px;
+  color: #5b4522;
+  font-weight: 700;
+  background: rgba(235, 217, 182, 0.56);
+}
+
+.meta {
+  margin: 10px 0;
+  color: var(--muted);
+}
+
+.price-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.price {
+  margin: 0;
+  font-weight: 800;
+  color: #3f2f14;
+}
+
+.btn {
+  display: inline-block;
+  text-align: center;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #ccb38a;
+  color: #6e5228;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.link-btn,
+.delete-btn,
+.cancel-booking-btn,
+.logout-btn {
+  border-color: #ccb38a;
+}
+
+.btn:hover {
+  background: #fff6e4;
+}
+
+.contact-section {
+  padding: 0 0 85px;
+}
+
+.contact-box {
+  padding: 32px;
+}
+
+.contact-box h2 {
+  margin-top: 0;
+  font-size: 2.2rem;
+}
+
+.empty {
+  padding: 26px;
+  text-align: center;
+}
+
+.detail-hero {
+  margin-bottom: 24px;
+}
+
+.detail-main-image {
+  width: 100%;
+  height: 490px;
+  object-fit: cover;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+
+.detail-content {
+  display: grid;
+  grid-template-columns: 1.35fr 0.75fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.detail-left h1 {
+  margin: 0 0 10px;
+  font-size: clamp(2.3rem, 4.3vw, 3.7rem);
+}
+
+.detail-rating {
+  margin: 0;
+  color: #6f552a;
+  font-weight: 700;
+}
+
+.detail-box,
+.booking-panel {
+  margin-top: 20px;
+  padding: 24px;
+}
+
+.amenities-list {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.amenity-item {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #d9c8ad;
+  background: rgba(238, 226, 203, 0.65);
+  color: #5d4721;
+  font-weight: 700;
+}
+
+.booking-price {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.booking-form,
+.login-form,
+.owner-form {
+  margin-top: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.booking-form label,
+.login-form label,
+.owner-form label {
+  display: grid;
+  gap: 6px;
+  font-weight: 700;
+}
+
+.owner-form textarea {
+  padding: 12px 14px;
+  min-height: 120px;
+  resize: vertical;
+}
+
+.detail-empty {
+  max-width: 520px;
+  margin: 40px auto;
+}
+
+.owner-top,
+.reservations-top {
+  margin-bottom: 24px;
+}
+
+.owner-grid {
+  display: grid;
+  grid-template-columns: 0.95fr 1.05fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.owner-form-box,
+.owner-list-box,
+.login-card {
+  padding: 30px;
+}
+
+.owner-stats {
+  margin-bottom: 18px;
+  display: flex;
+  gap: 12px;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 252, 245, 0.92);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stat-card strong {
+  font-size: 1.4rem;
+  color: #4f3b16;
+}
+
+.stat-card span {
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.owner-properties-list,
+.owner-bookings-list,
+.reservations-list {
+  display: grid;
+  gap: 18px;
+}
+
+.owner-property-card,
+.owner-booking-card,
+.reservation-card {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  gap: 18px;
+  overflow: hidden;
+}
+
+.owner-property-image,
+.owner-booking-image,
+.reservation-image {
+  width: 100%;
+  height: 100%;
+  min-height: 220px;
+  object-fit: cover;
+}
+
+.owner-bookings-title {
+  margin: 24px 0 14px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.9rem;
+}
+
+.login-text {
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+
+.account-status {
+  margin: 0 0 16px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: rgba(255, 252, 245, 0.9);
+  color: #5f4723;
+  font-weight: 700;
+}
+
+.auth-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.auth-box {
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.auth-box h2 {
+  margin-top: 0;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.8rem;
+}
+
+.auth-select {
+  height: 48px;
+  padding: 0 14px;
+}
+
+.owner-locked {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.profile-page {
+  padding: 62px 0 90px;
+}
+
+.profile-card {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 30px;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  background: var(--surface-strong);
+}
+
+.profile-message {
+  margin-top: 0;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-panel {
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.profile-panel h2 {
+  margin: 0 0 10px;
+  font-family: "Cormorant Garamond", serif;
+  font-size: 1.8rem;
+}
+
+.profile-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 980px) {
+  .hero-content,
+  .cards,
+  .detail-content,
+  .owner-grid,
+  .owner-property-card,
+  .owner-booking-card,
+  .reservation-card {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-main-image {
+    height: 320px;
+  }
+
+  .search-box {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .owner-property-image,
+  .owner-booking-image,
+  .reservation-image {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 640px) {
+  .container {
+    width: min(1180px, calc(100% - 26px));
+  }
+
+  .logo {
+    font-size: 1.7rem;
+  }
+
+  .hero {
+    padding-top: 54px;
+  }
+
+  .hero-card,
+  .login-card,
+  .owner-form-box,
+  .owner-list-box,
+  .detail-box,
+  .booking-panel,
+  .contact-box {
+    padding: 22px;
+    border-radius: 20px;
+  }
+
+  .card img {
+    height: 220px;
+  }
+
+  .owner-stats {
+    flex-direction: column;
+  }
+}
