@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nos Annonces - MaisonSeason</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-home"></i> MaisonSeason
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="properties.html" class="active">Annonces</a>
+        <a href="dashboard.html">Espace Hôte</a>
+        <button class="btn-auth" onclick="openModal('loginModal')">Connexion</button>
+      </div>
+      <button class="nav-toggle" onclick="toggleNav()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>Nos Annonces</h1>
+    <p>Découvrez toutes nos locations saisonnières</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Filtres -->
+      <div class="filters-bar">
+        <div class="filter-group">
+          <label>Lieu</label>
+          <select id="filterLocation" onchange="applyFilters()">
+            <option value="">Toutes les destinations</option>
+            <option value="Côte d'Azur">Côte d'Azur</option>
+            <option value="Alpes">Alpes</option>
+            <option value="Bretagne">Bretagne</option>
+            <option value="Provence">Provence</option>
+            <option value="Corse">Corse</option>
+            <option value="Normandie">Normandie</option>
+            <option value="Dordogne">Dordogne</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Prix max / nuit</label>
+          <input type="range" id="filterPrice" min="50" max="500" value="500" oninput="updatePriceLabel(this.value); applyFilters();">
+          <span id="priceLabel">500 &euro;</span>
+        </div>
+        <div class="filter-group">
+          <label>Chambres min</label>
+          <select id="filterBedrooms" onchange="applyFilters()">
+            <option value="0">Toutes</option>
+            <option value="1">1+</option>
+            <option value="2">2+</option>
+            <option value="3">3+</option>
+            <option value="4">4+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Voyageurs</label>
+          <select id="filterGuests" onchange="applyFilters()">
+            <option value="0">Tous</option>
+            <option value="2">2+</option>
+            <option value="4">4+</option>
+            <option value="6">6+</option>
+            <option value="8">8+</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label>Tri</label>
+          <select id="sortBy" onchange="applyFilters()">
+            <option value="default">Par défaut</option>
+            <option value="price-asc">Prix croissant</option>
+            <option value="price-desc">Prix décroissant</option>
+            <option value="rating">Meilleures notes</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="results-count" id="resultsCount"></div>
+
+      <!-- Grille d'annonces -->
+      <div class="properties-grid" id="propertiesList">
+        <!-- Remplies dynamiquement par JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 MaisonSeason. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Connexion -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Connexion</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      displayAllProperties();
+
+      // Check URL params pour filtre par lieu
+      const params = new URLSearchParams(window.location.search);
+      const loc = params.get('location');
+      if (loc) {
+        document.getElementById('filterLocation').value = loc;
+        applyFilters();
+      }
+    });
+  </script>
+</body>
+</html>

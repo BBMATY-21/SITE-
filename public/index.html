@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MaisonSeason - Location de Maisons Saisonnières</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-home"></i> MaisonSeason
+      </a>
+      <div class="nav-search">
+        <input type="text" id="searchLocation" placeholder="Destination...">
+        <input type="date" id="searchCheckin" placeholder="Arrivée">
+        <input type="date" id="searchCheckout" placeholder="Départ">
+        <input type="number" id="searchGuests" placeholder="Voyageurs" min="1" max="20">
+        <button class="btn-search" onclick="searchProperties()">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
+      </div>
+      <div class="nav-links">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="properties.html">Annonces</a>
+        <a href="dashboard.html">Espace Hôte</a>
+        <button class="btn-auth" onclick="openModal('loginModal')">Connexion</button>
+      </div>
+      <button class="nav-toggle" onclick="toggleNav()">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Trouvez votre maison de vacances idéale</h1>
+      <p>Des milliers de locations saisonnières pour des séjours inoubliables</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">500+</span>
+          <span class="stat-label">Propriétés</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">200+</span>
+          <span class="stat-label">Destinations</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">10k+</span>
+          <span class="stat-label">Voyageurs heureux</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Destinations populaires -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Destinations populaires</h2>
+      <div class="destinations-grid">
+        <div class="destination-card" onclick="filterByLocation('Côte d\'Azur')">
+          <div class="destination-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+            <i class="fas fa-umbrella-beach"></i>
+          </div>
+          <h3>Côte d'Azur</h3>
+          <p>42 propriétés</p>
+        </div>
+        <div class="destination-card" onclick="filterByLocation('Alpes')">
+          <div class="destination-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+            <i class="fas fa-mountain"></i>
+          </div>
+          <h3>Alpes</h3>
+          <p>38 propriétés</p>
+        </div>
+        <div class="destination-card" onclick="filterByLocation('Bretagne')">
+          <div class="destination-img" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+            <i class="fas fa-water"></i>
+          </div>
+          <h3>Bretagne</h3>
+          <p>25 propriétés</p>
+        </div>
+        <div class="destination-card" onclick="filterByLocation('Provence')">
+          <div class="destination-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
+            <i class="fas fa-sun"></i>
+          </div>
+          <h3>Provence</h3>
+          <p>31 propriétés</p>
+        </div>
+        <div class="destination-card" onclick="filterByLocation('Corse')">
+          <div class="destination-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+            <i class="fas fa-island-tropical"></i>
+          </div>
+          <h3>Corse</h3>
+          <p>18 propriétés</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Annonces en vedette -->
+  <section class="section section-gray">
+    <div class="container">
+      <h2 class="section-title">Annonces en vedette</h2>
+      <div class="properties-grid" id="featuredProperties">
+        <!-- Remplies dynamiquement par JS -->
+      </div>
+      <div class="text-center mt-3">
+        <a href="properties.html" class="btn btn-primary">Voir toutes les annonces</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Comment ça marche -->
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">Comment ça marche ?</h2>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-icon">
+            <i class="fas fa-search"></i>
+          </div>
+          <h3>1. Recherchez</h3>
+          <p>Explorez nos annonces et trouvez la maison qui vous correspond</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon">
+            <i class="fas fa-calendar-check"></i>
+          </div>
+          <h3>2. Réservez</h3>
+          <p>Choisissez vos dates et réservez en quelques clics</p>
+        </div>
+        <div class="step-card">
+          <div class="step-icon">
+            <i class="fas fa-key"></i>
+          </div>
+          <h3>3. Profitez</h3>
+          <p>Recevez les clés et profitez de vos vacances</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Témoignages -->
+  <section class="section section-gray">
+    <div class="container">
+      <h2 class="section-title">Ce que disent nos voyageurs</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p>"Expérience incroyable ! La maison était parfaite et la vue magnifique. Nous reviendrons certainement !"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">ML</div>
+            <div>
+              <strong>Marie L.</strong>
+              <span>Côte d'Azur, Juillet 2025</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+          <p>"Le chalet était exactement comme sur les photos. Service impeccable du début à la fin."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">PD</div>
+            <div>
+              <strong>Pierre D.</strong>
+              <span>Alpes, Décembre 2025</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
+          </div>
+          <p>"Très belle propriété en bord de mer. Idéal pour une famille avec enfants. Je recommande !"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">SB</div>
+            <div>
+              <strong>Sophie B.</strong>
+              <span>Bretagne, Août 2025</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h3><i class="fas fa-home"></i> MaisonSeason</h3>
+          <p>La plateforme de référence pour la location de maisons saisonnières en France.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Navigation</h4>
+          <a href="index.html">Accueil</a>
+          <a href="properties.html">Annonces</a>
+          <a href="dashboard.html">Espace Hôte</a>
+        </div>
+        <div class="footer-col">
+          <h4>Aide</h4>
+          <a href="#">Centre d'aide</a>
+          <a href="#">Conditions d'utilisation</a>
+          <a href="#">Politique de confidentialité</a>
+        </div>
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <p><i class="fas fa-envelope"></i> contact@maisonseason.fr</p>
+          <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
+          <div class="social-links">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 MaisonSeason. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Modal Connexion -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Connexion</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+      </form>
+      <p class="text-center mt-2">
+        Pas encore de compte ? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Inscrivez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Inscription -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+      <h2>Inscription</h2>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="regFirstName">Prénom</label>
+            <input type="text" id="regFirstName" required>
+          </div>
+          <div class="form-group">
+            <label for="regLastName">Nom</label>
+            <input type="text" id="regLastName" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Téléphone</label>
+          <input type="tel" id="regPhone">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Mot de passe</label>
+          <input type="password" id="regPassword" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="regRole">Je suis :</label>
+          <select id="regRole">
+            <option value="guest">Voyageur</option>
+            <option value="host">Propriétaire</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">S'inscrire</button>
+      </form>
+      <p class="text-center mt-2">
+        Déjà un compte ? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Connectez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

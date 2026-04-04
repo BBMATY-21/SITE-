@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Espace Hôte - MaisonSeason</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-home"></i> MaisonSeason
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="properties.html">Annonces</a>
+        <a href="dashboard.html" class="active">Espace Hôte</a>
+        <button class="btn-auth" onclick="openModal('loginModal')">Connexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1>Espace Hôte</h1>
+    <p>Gérez vos propriétés et réservations</p>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <!-- Dashboard Stats -->
+      <div class="dashboard-stats">
+        <div class="stat-card">
+          <i class="fas fa-house"></i>
+          <div class="stat-info">
+            <span class="stat-value" id="totalProperties">0</span>
+            <span class="stat-label">Propriétés</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-calendar-check"></i>
+          <div class="stat-info">
+            <span class="stat-value" id="totalBookings">0</span>
+            <span class="stat-label">Réservations</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-euro-sign"></i>
+          <div class="stat-info">
+            <span class="stat-value" id="totalRevenue">0</span>
+            <span class="stat-label">Revenus</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-star"></i>
+          <div class="stat-info">
+            <span class="stat-value" id="avgRating">0</span>
+            <span class="stat-label">Note moyenne</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="dashboard-tabs">
+        <button class="tab-btn active" onclick="showTab('myProperties')">Mes Propriétés</button>
+        <button class="tab-btn" onclick="showTab('myBookings')">Réservations</button>
+        <button class="tab-btn" onclick="showTab('addProperty')">+ Ajouter une annonce</button>
+      </div>
+
+      <!-- Tab: Mes Propriétés -->
+      <div class="tab-content active" id="myProperties">
+        <div class="my-properties-list" id="myPropertiesList">
+          <!-- Rempli dynamiquement -->
+        </div>
+      </div>
+
+      <!-- Tab: Réservations -->
+      <div class="tab-content" id="myBookings">
+        <div class="bookings-table">
+          <table>
+            <thead>
+              <tr>
+                <th>Propriété</th>
+                <th>Voyageur</th>
+                <th>Arrivée</th>
+                <th>Départ</th>
+                <th>Montant</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsTableBody">
+              <!-- Rempli dynamiquement -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Tab: Ajouter -->
+      <div class="tab-content" id="addProperty">
+        <form class="property-form" id="addPropertyForm" onsubmit="handleAddProperty(event)">
+          <h3>Nouvelle annonce</h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="propTitle">Titre de l'annonce *</label>
+              <input type="text" id="propTitle" required placeholder="Ex: Villa avec vue mer">
+            </div>
+            <div class="form-group">
+              <label for="propLocation">Localisation *</label>
+              <select id="propLocation" required>
+                <option value="">-- Choisir --</option>
+                <option value="Côte d'Azur">Côte d'Azur</option>
+                <option value="Alpes">Alpes</option>
+                <option value="Bretagne">Bretagne</option>
+                <option value="Provence">Provence</option>
+                <option value="Corse">Corse</option>
+                <option value="Normandie">Normandie</option>
+                <option value="Dordogne">Dordogne</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="propDescription">Description *</label>
+            <textarea id="propDescription" rows="5" required placeholder="Décrivez votre propriété en détail..."></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="propPrice">Prix par nuit (&euro;) *</label>
+              <input type="number" id="propPrice" required min="1" placeholder="150">
+            </div>
+            <div class="form-group">
+              <label for="propBedrooms">Chambres *</label>
+              <input type="number" id="propBedrooms" required min="1" max="20" placeholder="3">
+            </div>
+            <div class="form-group">
+              <label for="propBathrooms">Salles de bain *</label>
+              <input type="number" id="propBathrooms" required min="1" max="10" placeholder="2">
+            </div>
+            <div class="form-group">
+              <label for="propGuests">Voyageurs max *</label>
+              <input type="number" id="propGuests" required min="1" max="30" placeholder="6">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Équipements</label>
+            <div class="amenities-checkboxes">
+              <label class="checkbox-label"><input type="checkbox" value="WiFi"> WiFi</label>
+              <label class="checkbox-label"><input type="checkbox" value="Piscine"> Piscine</label>
+              <label class="checkbox-label"><input type="checkbox" value="Parking"> Parking</label>
+              <label class="checkbox-label"><input type="checkbox" value="Climatisation"> Climatisation</label>
+              <label class="checkbox-label"><input type="checkbox" value="Cuisine équipée"> Cuisine équipée</label>
+              <label class="checkbox-label"><input type="checkbox" value="Lave-linge"> Lave-linge</label>
+              <label class="checkbox-label"><input type="checkbox" value="Jardin"> Jardin</label>
+              <label class="checkbox-label"><input type="checkbox" value="Terrasse"> Terrasse</label>
+              <label class="checkbox-label"><input type="checkbox" value="BBQ"> BBQ</label>
+              <label class="checkbox-label"><input type="checkbox" value="Vue mer"> Vue mer</label>
+              <label class="checkbox-label"><input type="checkbox" value="Animaux acceptés"> Animaux acceptés</label>
+              <label class="checkbox-label"><input type="checkbox" value="Cheminée"> Cheminée</label>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="propImages">URLs des images (une par ligne)</label>
+            <textarea id="propImages" rows="3" placeholder="https://example.com/image1.jpg"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-full">Publier l'annonce</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Connexion -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Connexion</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 MaisonSeason. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      loadDashboard();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détails - MaisonSeason</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="logo">
+        <i class="fas fa-home"></i> MaisonSeason
+      </a>
+      <div class="nav-links">
+        <a href="index.html">Accueil</a>
+        <a href="properties.html">Annonces</a>
+        <a href="dashboard.html">Espace Hôte</a>
+        <button class="btn-auth" onclick="openModal('loginModal')">Connexion</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="property-detail" id="propertyDetail">
+    <!-- Rempli dynamiquement -->
+  </div>
+
+  <!-- Modal Réservation -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-content modal-large">
+      <span class="modal-close" onclick="closeModal('bookingModal')">&times;</span>
+      <h2>Confirmer votre réservation</h2>
+      <div id="bookingSummary"></div>
+      <form id="bookingForm" onsubmit="confirmBooking(event)">
+        <div class="form-group">
+          <label>Demandes spéciales</label>
+          <textarea id="specialRequests" rows="3" placeholder="Arrivée tardive, lit bébé..."></textarea>
+        </div>
+        <div class="booking-total" id="bookingTotal"></div>
+        <button type="submit" class="btn btn-primary btn-full">Confirmer la réservation</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Connexion -->
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('loginModal')">&times;</span>
+      <h2>Connexion</h2>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2026 MaisonSeason. Tous droits réservés.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const id = parseInt(params.get('id'));
+      if (id) {
+        displayPropertyDetail(id);
+      } else {
+        window.location.href = 'properties.html';
+      }
+    });
+  </script>
+</body>
+</html>
