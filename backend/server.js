@@ -1,11 +1,11 @@
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
-const connectDB = require('./config/db');
-require('dotenv').config();
 
-// Connexion a la base de donnees
-connectDB();
+// Charger les variables d'environnement EN PREMIER
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+const connectDB = require('./config/db');
 
 const app = express();
 
@@ -34,6 +34,9 @@ app.get('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 5000;
+
+// Démarrer le serveur PUIS connecter la DB (le serveur ne crash pas si la DB est lente)
 app.listen(PORT, () => {
-  console.log(`Serveur MaisonSeason lancé sur http://localhost:${PORT}`);
+  console.log(`Serveur MaisonSeason lancé sur le port ${PORT}`);
+  connectDB();
 });
