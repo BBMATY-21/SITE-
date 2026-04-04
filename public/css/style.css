@@ -2,23 +2,27 @@
    VARIABLES & RESET
    ======================================== */
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #dbeafe;
-  --secondary: #f59e0b;
-  --secondary-dark: #d97706;
-  --dark: #1e293b;
-  --gray-900: #0f172a;
-  --gray-700: #334155;
-  --gray-500: #64748b;
-  --gray-300: #cbd5e1;
-  --gray-100: #f1f5f9;
+  --primary: #e07a2f;
+  --primary-dark: #c4621a;
+  --primary-light: #fff3e6;
+  --secondary: #1bb5a0;
+  --secondary-dark: #159080;
+  --dark: #2d2418;
+  --gray-900: #1a1410;
+  --gray-700: #5c4a3a;
+  --gray-500: #8c7b6b;
+  --gray-300: #d9cfc5;
+  --gray-100: #faf6f1;
   --white: #ffffff;
-  --success: #10b981;
-  --danger: #ef4444;
-  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --radius: 12px;
+  --success: #1bb5a0;
+  --danger: #e05c4a;
+  --sand: #f5efe6;
+  --coral: #f08a6e;
+  --turquoise: #38b2ac;
+  --warm-bg: #fdf8f3;
+  --shadow: 0 4px 12px -2px rgb(45 36 24 / 0.08), 0 2px 6px -2px rgb(45 36 24 / 0.06);
+  --shadow-lg: 0 12px 24px -4px rgb(45 36 24 / 0.12), 0 4px 8px -4px rgb(45 36 24 / 0.08);
+  --radius: 16px;
   --transition: all 0.3s ease;
 }
 
@@ -32,7 +36,7 @@ body {
   font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: var(--dark);
   line-height: 1.6;
-  background: var(--gray-100);
+  background: var(--warm-bg);
 }
 
 a {
@@ -190,7 +194,7 @@ input, select, textarea { font-family: inherit; }
    HERO SECTION
    ======================================== */
 .hero {
-  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #e07a2f 0%, #f08a6e 40%, #38b2ac 100%);
   color: var(--white);
   padding: 80px 0 100px;
   position: relative;
@@ -325,6 +329,7 @@ input, select, textarea { font-family: inherit; }
   overflow: hidden;
   box-shadow: var(--shadow);
   transition: var(--transition);
+  border: 1px solid rgba(217, 207, 197, 0.4);
 }
 
 .property-card:hover {
@@ -423,7 +428,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .stars {
-  color: var(--secondary);
+  color: var(--coral);
   font-size: 0.9rem;
 }
 
@@ -514,7 +519,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .testimonial-stars {
-  color: var(--secondary);
+  color: var(--coral);
   font-size: 1rem;
   margin-bottom: 15px;
 }
@@ -558,7 +563,7 @@ input, select, textarea { font-family: inherit; }
    FOOTER
    ======================================== */
 .footer {
-  background: var(--gray-900);
+  background: var(--dark);
   color: var(--gray-300);
   padding: 60px 0 30px;
 }
@@ -953,8 +958,8 @@ input, select, textarea { font-family: inherit; }
 }
 
 .calendar-day.booked {
-  background: #fee2e2;
-  color: #dc2626;
+  background: #fde2d8;
+  color: #c44a32;
   cursor: not-allowed;
   text-decoration: line-through;
 }
@@ -989,7 +994,7 @@ input, select, textarea { font-family: inherit; }
 }
 
 .legend-dot.available { background: var(--primary-light); }
-.legend-dot.booked { background: #fee2e2; }
+.legend-dot.booked { background: #fde2d8; }
 .legend-dot.selected { background: var(--primary); }
 
 /* ========================================
@@ -1231,10 +1236,11 @@ input, select, textarea { font-family: inherit; }
    ======================================== */
 .navbar {
   background: var(--white);
-  box-shadow: var(--shadow);
+  box-shadow: 0 2px 8px rgb(45 36 24 / 0.06);
   position: sticky;
   top: 0;
   z-index: 1000;
+  border-bottom: 1px solid rgba(217, 207, 197, 0.3);
 }
 
 .nav-container {
@@ -1309,7 +1315,7 @@ input, select, textarea { font-family: inherit; }
    PAGE HEADER
    ======================================== */
 .page-header {
-  background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #e07a2f 0%, #f08a6e 50%, #38b2ac 100%);
   color: var(--white);
   text-align: center;
   padding: 50px 20px;
@@ -1417,7 +1423,7 @@ input, select, textarea { font-family: inherit; }
 .step-icon {
   width: 70px;
   height: 70px;
-  background: var(--primary-light);
+  background: linear-gradient(135deg, #fff3e6, #ffe0c7);
   color: var(--primary);
   border-radius: 50%;
   display: flex;
@@ -1434,7 +1440,7 @@ input, select, textarea { font-family: inherit; }
    SECTION GRAY
    ======================================== */
 .section-gray {
-  background: var(--white);
+  background: var(--sand);
 }
 
 .section .section-title {
@@ -1896,9 +1902,9 @@ input, select, textarea { font-family: inherit; }
   font-weight: 600;
 }
 
-.status-badge.pending { background: #fef3c7; color: #d97706; }
-.status-badge.confirmed { background: #d1fae5; color: #059669; }
-.status-badge.cancelled { background: #fee2e2; color: #dc2626; }
+.status-badge.pending { background: #fef3e0; color: #c4621a; }
+.status-badge.confirmed { background: #d4f5ef; color: #159080; }
+.status-badge.cancelled { background: #fde2d8; color: #c44a32; }
 
 /* Property Form */
 .property-form {
