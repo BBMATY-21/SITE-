@@ -109,7 +109,7 @@
               <input type="text" id="propTitle" required placeholder="Ex: Villa avec vue mer">
             </div>
             <div class="form-group">
-              <label for="propLocation">Localisation *</label>
+              <label for="propLocation">Région *</label>
               <select id="propLocation" required>
                 <option value="">-- Choisir --</option>
                 <option value="Côte d'Azur">Côte d'Azur</option>
@@ -121,6 +121,11 @@
                 <option value="Dordogne">Dordogne</option>
               </select>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="propAddress">Adresse / Ville *</label>
+            <input type="text" id="propAddress" required placeholder="Ex: Nice, Alpes-Maritimes">
           </div>
 
           <div class="form-group">
@@ -192,6 +197,63 @@
         </div>
         <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
       </form>
+      <p class="text-center mt-2">
+        Pas encore de compte ? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Inscrivez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Inscription -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+      <h2>Inscription</h2>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="regFirstName">Prénom</label>
+            <input type="text" id="regFirstName" required>
+          </div>
+          <div class="form-group">
+            <label for="regLastName">Nom</label>
+            <input type="text" id="regLastName" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="regPhone">Téléphone</label>
+          <input type="tel" id="regPhone">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Mot de passe</label>
+          <input type="password" id="regPassword" required minlength="6">
+        </div>
+        <div class="form-group">
+          <label for="regRole">Je suis :</label>
+          <select id="regRole">
+            <option value="host">Propriétaire</option>
+            <option value="guest">Voyageur</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary btn-full">S'inscrire</button>
+      </form>
+      <p class="text-center mt-2">
+        Déjà un compte ? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Connectez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Menu Utilisateur -->
+  <div class="modal" id="userMenuModal">
+    <div class="modal-content" style="max-width:350px">
+      <span class="modal-close" onclick="closeModal('userMenuModal')">&times;</span>
+      <h2>Mon compte</h2>
+      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;margin-top:15px;">
+        <i class="fas fa-sign-out-alt"></i> Déconnexion
+      </button>
     </div>
   </div>
 
@@ -207,6 +269,23 @@
   <script src="js/app.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      const user = getUser();
+      if (!user) {
+        // Not logged in: show login prompt
+        document.querySelector('.section .container').innerHTML = `
+          <div style="text-align:center;padding:60px 20px;">
+            <i class="fas fa-lock" style="font-size:3rem;color:#ccc;margin-bottom:20px;"></i>
+            <h2>Espace réservé aux propriétaires</h2>
+            <p style="color:#888;margin:15px 0;">Connectez-vous ou inscrivez-vous en tant que propriétaire pour gérer vos annonces.</p>
+            <button class="btn btn-primary" onclick="openModal('loginModal')" style="padding:12px 30px;margin:10px;">
+              <i class="fas fa-sign-in-alt"></i> Se connecter
+            </button>
+            <button class="btn" onclick="openModal('registerModal')" style="padding:12px 30px;margin:10px;background:#f0f0f0;color:#333;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">
+              <i class="fas fa-user-plus"></i> S'inscrire
+            </button>
+          </div>`;
+        return;
+      }
       loadDashboard();
     });
   </script>

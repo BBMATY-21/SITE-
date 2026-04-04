@@ -118,6 +118,39 @@
         </div>
         <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
       </form>
+      <p class="text-center mt-2">
+        Pas encore de compte ? <a href="#" onclick="switchModal('loginModal', 'registerModal')">Inscrivez-vous</a>
+      </p>
+    </div>
+  </div>
+
+  <!-- Modal Inscription -->
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <span class="modal-close" onclick="closeModal('registerModal')">&times;</span>
+      <h2>Inscription</h2>
+      <form id="registerForm" onsubmit="handleRegister(event)">
+        <div class="form-row">
+          <div class="form-group"><label for="regFirstName">Prénom</label><input type="text" id="regFirstName" required></div>
+          <div class="form-group"><label for="regLastName">Nom</label><input type="text" id="regLastName" required></div>
+        </div>
+        <div class="form-group"><label for="regEmail">Email</label><input type="email" id="regEmail" required></div>
+        <div class="form-group"><label for="regPhone">Téléphone</label><input type="tel" id="regPhone"></div>
+        <div class="form-group"><label for="regPassword">Mot de passe</label><input type="password" id="regPassword" required minlength="6"></div>
+        <div class="form-group"><label for="regRole">Je suis :</label><select id="regRole"><option value="guest">Voyageur</option><option value="host">Propriétaire</option></select></div>
+        <button type="submit" class="btn btn-primary btn-full">S'inscrire</button>
+      </form>
+      <p class="text-center mt-2">Déjà un compte ? <a href="#" onclick="switchModal('registerModal', 'loginModal')">Connectez-vous</a></p>
+    </div>
+  </div>
+
+  <!-- Modal Menu Utilisateur -->
+  <div class="modal" id="userMenuModal">
+    <div class="modal-content" style="max-width:350px">
+      <span class="modal-close" onclick="closeModal('userMenuModal')">&times;</span>
+      <h2>Mon compte</h2>
+      <a href="dashboard.html" class="btn btn-primary btn-full" style="margin-bottom:10px;text-align:center;text-decoration:none;display:block;padding:12px;"><i class="fas fa-tachometer-alt"></i> Espace Propriétaire</a>
+      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
     </div>
   </div>
 

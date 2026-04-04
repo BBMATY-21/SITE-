@@ -13,6 +13,10 @@ const propertySchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  address: {
+    type: String,
+    default: ''
+  },
   price: {
     type: Number,
     required: true

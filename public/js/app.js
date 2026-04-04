@@ -5,6 +5,46 @@
 const API_URL = '/api';
 
 // ============================================
+// Auth State
+// ============================================
+function getToken() { return localStorage.getItem('token'); }
+function getUser() {
+  const u = localStorage.getItem('user');
+  return u ? JSON.parse(u) : null;
+}
+function setAuth(token, user) {
+  localStorage.setItem('token', token);
+  localStorage.setItem('user', JSON.stringify(user));
+}
+function clearAuth() {
+  localStorage.removeItem('token');
+  localStorage.removeItem('user');
+}
+function authHeaders() {
+  const t = getToken();
+  return t ? { 'Authorization': 'Bearer ' + t, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
+}
+
+// ============================================
+// Update Navbar based on Auth
+// ============================================
+function updateNavbar() {
+  const user = getUser();
+  document.querySelectorAll('.btn-auth').forEach(btn => {
+    if (user) {
+      btn.textContent = user.firstName;
+      btn.onclick = () => openModal('userMenuModal');
+    } else {
+      btn.textContent = 'Connexion';
+      btn.onclick = () => openModal('loginModal');
+    }
+  });
+  document.querySelectorAll('.nav-link-dashboard').forEach(el => {
+    el.style.display = user && user.role === 'host' ? '' : 'none';
+  });
+}
+
+// ============================================
 // Navigation
 // ============================================
 function toggleNav() {
@@ -15,19 +55,17 @@ function toggleNav() {
 // Modals
 // ============================================
 function openModal(id) {
-  document.getElementById(id).classList.add('active');
+  const el = document.getElementById(id);
+  if (el) el.classList.add('active');
 }
-
 function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
+  const el = document.getElementById(id);
+  if (el) el.classList.remove('active');
 }
-
 function switchModal(from, to) {
   closeModal(from);
   setTimeout(() => openModal(to), 200);
 }
-
-// Close modal on outside click
 document.addEventListener('click', (e) => {
   if (e.target.classList.contains('modal') && e.target.classList.contains('active')) {
     e.target.classList.remove('active');
@@ -40,12 +78,10 @@ document.addEventListener('click', (e) => {
 function showToast(message, type = 'success') {
   const existing = document.querySelector('.toast');
   if (existing) existing.remove();
-
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
   toast.textContent = message;
   document.body.appendChild(toast);
-
   requestAnimationFrame(() => toast.classList.add('show'));
   setTimeout(() => {
     toast.classList.remove('show');
@@ -54,26 +90,105 @@ function showToast(message, type = 'success') {
 }
 
 // ============================================
+// Auth: Login & Register (API réelle)
+// ============================================
+async function handleLogin(event) {
+  event.preventDefault();
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
+
+  try {
+    const res = await fetch(API_URL + '/users/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    setAuth(data.token, data.user);
+    closeModal('loginModal');
+    showToast('Bienvenue ' + data.user.firstName + ' !');
+    updateNavbar();
+
+    // Redirect host to dashboard
+    if (data.user.role === 'host' && !window.location.pathname.includes('dashboard')) {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.location.reload();
+    }
+  } catch (err) {
+    showToast(err.message || 'Erreur de connexion', 'error');
+  }
+}
+
+async function handleRegister(event) {
+  event.preventDefault();
+  const body = {
+    firstName: document.getElementById('regFirstName').value,
+    lastName: document.getElementById('regLastName').value,
+    email: document.getElementById('regEmail').value,
+    phone: document.getElementById('regPhone').value,
+    password: document.getElementById('regPassword').value,
+    role: document.getElementById('regRole').value
+  };
+
+  try {
+    const res = await fetch(API_URL + '/users/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    setAuth(data.token, data.user);
+    closeModal('registerModal');
+    showToast('Inscription réussie ! Bienvenue ' + data.user.firstName);
+    updateNavbar();
+
+    if (data.user.role === 'host') {
+      window.location.href = 'dashboard.html';
+    } else {
+      window.location.reload();
+    }
+  } catch (err) {
+    showToast(err.message || 'Erreur d\'inscription', 'error');
+  }
+}
+
+function handleLogout() {
+  clearAuth();
+  closeModal('userMenuModal');
+  showToast('Déconnecté');
+  updateNavbar();
+  if (window.location.pathname.includes('dashboard')) {
+    window.location.href = 'index.html';
+  } else {
+    window.location.reload();
+  }
+}
+
+// ============================================
 // Property Card HTML
 // ============================================
 function createPropertyCard(property) {
-  const starsHtml = generateStars(property.rating);
-  const badgeHtml = property.badge
-    ? `<span class="property-badge">${property.badge}</span>`
-    : '';
+  const starsHtml = generateStars(property.rating || 0);
+  const badgeHtml = property.badge ? `<span class="property-badge">${property.badge}</span>` : '';
+  const image = property.images && property.images.length > 0
+    ? property.images[0]
+    : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+  const id = property._id || property.id;
 
   return `
-    <div class="property-card" onclick="window.location.href='property.html?id=${property.id}'">
+    <div class="property-card" onclick="window.location.href='property.html?id=${id}'">
       <div class="property-card-image">
         ${badgeHtml}
-        <button class="property-favorite" onclick="event.stopPropagation(); toggleFavorite(${property.id}, this)">
-          <i class="far fa-heart"></i>
-        </button>
-        <img src="${property.images[0]}" alt="${property.title}" loading="lazy">
+        <img src="${image}" alt="${property.title}" loading="lazy">
       </div>
       <div class="property-card-body">
         <div class="property-location">
-          <i class="fas fa-map-marker-alt"></i> ${property.address}
+          <i class="fas fa-map-marker-alt"></i> ${property.address || property.location}
         </div>
         <h3>${property.title}</h3>
         <div class="property-features">
@@ -87,8 +202,7 @@ function createPropertyCard(property) {
           </div>
           <div class="property-rating">
             <span class="stars">${starsHtml}</span>
-            <strong>${property.rating}</strong>
-            <span class="rating-count">(${property.reviewCount})</span>
+            <strong>${(property.rating || 0).toFixed(1)}</strong>
           </div>
         </div>
       </div>
@@ -99,13 +213,9 @@ function createPropertyCard(property) {
 function generateStars(rating) {
   let html = '';
   for (let i = 1; i <= 5; i++) {
-    if (i <= Math.floor(rating)) {
-      html += '<i class="fas fa-star"></i>';
-    } else if (i - rating < 1) {
-      html += '<i class="fas fa-star-half-alt"></i>';
-    } else {
-      html += '<i class="far fa-star"></i>';
-    }
+    if (i <= Math.floor(rating)) html += '<i class="fas fa-star"></i>';
+    else if (i - rating < 1) html += '<i class="fas fa-star-half-alt"></i>';
+    else html += '<i class="far fa-star"></i>';
   }
   return html;
 }
@@ -113,30 +223,42 @@ function generateStars(rating) {
 // ============================================
 // Featured Properties (index.html)
 // ============================================
-function displayFeaturedProperties() {
+async function displayFeaturedProperties() {
   const container = document.getElementById('featuredProperties');
   if (!container) return;
 
-  const featured = PROPERTIES_DATA
-    .sort((a, b) => b.rating - a.rating)
-    .slice(0, 6);
+  await loadProperties();
 
+  if (PROPERTIES_DATA.length === 0) {
+    container.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:40px;color:#888;">Aucune annonce pour le moment. Soyez le premier à publier !</p>';
+    return;
+  }
+
+  const featured = [...PROPERTIES_DATA].sort((a, b) => (b.rating || 0) - (a.rating || 0)).slice(0, 6);
   container.innerHTML = featured.map(createPropertyCard).join('');
 }
 
 // ============================================
 // All Properties (properties.html)
 // ============================================
-function displayAllProperties(properties = null) {
+async function displayAllProperties(properties = null) {
   const container = document.getElementById('propertiesList');
   if (!container) return;
 
-  const data = properties || PROPERTIES_DATA;
-  container.innerHTML = data.map(createPropertyCard).join('');
+  if (!properties) {
+    await loadProperties();
+    properties = PROPERTIES_DATA;
+  }
+
+  if (properties.length === 0) {
+    container.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:40px;color:#888;">Aucune annonce disponible.</p>';
+  } else {
+    container.innerHTML = properties.map(createPropertyCard).join('');
+  }
 
   const countEl = document.getElementById('resultsCount');
   if (countEl) {
-    countEl.textContent = `${data.length} propriété${data.length > 1 ? 's' : ''} trouvée${data.length > 1 ? 's' : ''}`;
+    countEl.textContent = `${properties.length} propriété${properties.length > 1 ? 's' : ''} trouvée${properties.length > 1 ? 's' : ''}`;
   }
 }
 
@@ -160,57 +282,32 @@ function applyFilters() {
   });
 
   switch (sortBy) {
-    case 'price-asc':
-      filtered.sort((a, b) => a.pricePerNight - b.pricePerNight);
-      break;
-    case 'price-desc':
-      filtered.sort((a, b) => b.pricePerNight - a.pricePerNight);
-      break;
-    case 'rating':
-      filtered.sort((a, b) => b.rating - a.rating);
-      break;
+    case 'price-asc': filtered.sort((a, b) => a.pricePerNight - b.pricePerNight); break;
+    case 'price-desc': filtered.sort((a, b) => b.pricePerNight - a.pricePerNight); break;
+    case 'rating': filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0)); break;
   }
 
   displayAllProperties(filtered);
 }
 
 // ============================================
-// Search from Navbar
+// Search
 // ============================================
 function searchProperties() {
   const location = document.getElementById('searchLocation')?.value || '';
   const checkin = document.getElementById('searchCheckin')?.value || '';
   const checkout = document.getElementById('searchCheckout')?.value || '';
   const guests = document.getElementById('searchGuests')?.value || '';
-
   const params = new URLSearchParams();
   if (location) params.set('location', location);
   if (checkin) params.set('checkin', checkin);
   if (checkout) params.set('checkout', checkout);
   if (guests) params.set('guests', guests);
-
   window.location.href = `properties.html?${params.toString()}`;
 }
 
 function filterByLocation(location) {
   window.location.href = `properties.html?location=${encodeURIComponent(location)}`;
-}
-
-// ============================================
-// Favorites
-// ============================================
-function toggleFavorite(id, btn) {
-  btn.classList.toggle('active');
-  const icon = btn.querySelector('i');
-  if (btn.classList.contains('active')) {
-    icon.className = 'fas fa-heart';
-    icon.style.color = '#ef4444';
-    showToast('Ajouté aux favoris');
-  } else {
-    icon.className = 'far fa-heart';
-    icon.style.color = '';
-    showToast('Retiré des favoris', 'info');
-  }
 }
 
 // ============================================
@@ -221,33 +318,50 @@ let selectedCheckOut = null;
 let currentMonth = new Date().getMonth();
 let currentYear = new Date().getFullYear();
 let currentProperty = null;
+let bookedRanges = [];
 
-function displayPropertyDetail(id) {
-  const property = PROPERTIES_DATA.find(p => p.id === id);
-  if (!property) {
+async function displayPropertyDetail(id) {
+  try {
+    const res = await fetch(API_URL + '/properties/' + id);
+    if (!res.ok) throw new Error('Propriété non trouvée');
+    currentProperty = await res.json();
+  } catch (err) {
     document.getElementById('propertyDetail').innerHTML = '<p style="text-align:center;padding:60px;">Propriété non trouvée</p>';
     return;
   }
 
-  currentProperty = property;
+  // Load booked dates from API
+  try {
+    const bRes = await fetch(API_URL + '/bookings/property/' + id);
+    const bookings = await bRes.json();
+    bookedRanges = bookings.map(b => ({
+      start: b.checkInDate.split('T')[0],
+      end: b.checkOutDate.split('T')[0]
+    }));
+  } catch (err) {
+    bookedRanges = [];
+  }
+
+  const property = currentProperty;
   document.title = `${property.title} - MaisonSeason`;
 
-  const imagesHtml = property.images.length >= 4
-    ? `<div class="gallery-grid">
-        <img class="main-img" src="${property.images[0]}" alt="${property.title}">
-        <img src="${property.images[1]}" alt="">
-        <img src="${property.images[2]}" alt="">
-        <img src="${property.images[3]}" alt="">
-       </div>`
-    : `<div class="gallery-grid">
-        <img class="main-img" src="${property.images[0]}" alt="${property.title}" style="grid-column: 1/-1; grid-row: 1/-1;">
-       </div>`;
+  const image0 = property.images?.[0] || 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+  const image1 = property.images?.[1] || image0;
+  const image2 = property.images?.[2] || image0;
+  const image3 = property.images?.[3] || image0;
 
-  const amenitiesHtml = property.amenities
+  const imagesHtml = `<div class="gallery-grid">
+    <img class="main-img" src="${image0}" alt="${property.title}">
+    <img src="${image1}" alt="">
+    <img src="${image2}" alt="">
+    <img src="${image3}" alt="">
+  </div>`;
+
+  const amenitiesHtml = (property.amenities || [])
     .map(a => `<div class="amenity-tag"><i class="${getAmenityIcon(a)}"></i> ${a}</div>`)
     .join('');
 
-  const reviewsHtml = property.reviews
+  const reviewsHtml = (property.reviews || [])
     .map(r => `
       <div class="review-item">
         <div class="review-header">
@@ -264,18 +378,19 @@ function displayPropertyDetail(id) {
       </div>
     `).join('');
 
+  const ownerName = property.owner ? (property.owner.firstName + ' ' + property.owner.lastName) : 'Propriétaire';
+
   document.getElementById('propertyDetail').innerHTML = `
     ${imagesHtml}
-
     <div class="detail-grid">
       <div class="info-section">
         <h1>${property.title}</h1>
         <div class="info-meta">
-          <span><i class="fas fa-map-marker-alt"></i> ${property.address}</span>
+          <span><i class="fas fa-map-marker-alt"></i> ${property.address || property.location}</span>
           <span><i class="fas fa-bed"></i> ${property.bedrooms} chambres</span>
           <span><i class="fas fa-bath"></i> ${property.bathrooms} salles de bain</span>
           <span><i class="fas fa-users"></i> ${property.guests} voyageurs</span>
-          <span><i class="fas fa-star" style="color: var(--secondary)"></i> ${property.rating} (${property.reviewCount} avis)</span>
+          <span><i class="fas fa-user"></i> Hôte: ${ownerName}</span>
         </div>
 
         <div class="detail-section">
@@ -283,20 +398,14 @@ function displayPropertyDetail(id) {
           <p>${property.description}</p>
         </div>
 
-        <div class="detail-section">
-          <h2>Equipements</h2>
-          <div class="amenities-list">${amenitiesHtml}</div>
-        </div>
+        ${amenitiesHtml ? `<div class="detail-section"><h2>Équipements</h2><div class="amenities-list">${amenitiesHtml}</div></div>` : ''}
 
         <div class="detail-section calendar-container">
           <h2>Disponibilités</h2>
           <div class="calendar" id="calendarWidget"></div>
         </div>
 
-        <div class="detail-section detail-reviews">
-          <h2>Avis (${property.reviewCount})</h2>
-          ${reviewsHtml}
-        </div>
+        ${reviewsHtml ? `<div class="detail-section detail-reviews"><h2>Avis</h2>${reviewsHtml}</div>` : ''}
       </div>
 
       <div class="booking-sidebar">
@@ -304,7 +413,6 @@ function displayPropertyDetail(id) {
           <span class="amount">${property.pricePerNight}&euro;</span>
           <span class="per-night">/ nuit</span>
         </div>
-
         <div class="booking-form">
           <div class="booking-dates">
             <div class="form-group">
@@ -316,7 +424,6 @@ function displayPropertyDetail(id) {
               <input type="date" id="detailCheckout" onchange="updateBookingTotal()">
             </div>
           </div>
-
           <div class="form-group">
             <label>Voyageurs</label>
             <select id="detailGuests">
@@ -325,26 +432,12 @@ function displayPropertyDetail(id) {
               ).join('')}
             </select>
           </div>
-
           <div class="booking-summary" id="bookingSummarySection" style="display:none">
-            <div class="booking-summary-row">
-              <span id="nightsLabel">0 nuits</span>
-              <span id="nightsPrice">0&euro;</span>
-            </div>
-            <div class="booking-summary-row">
-              <span>Frais de ménage</span>
-              <span>50&euro;</span>
-            </div>
-            <div class="booking-summary-row">
-              <span>Frais de service</span>
-              <span id="serviceFee">0&euro;</span>
-            </div>
-            <div class="booking-summary-row total">
-              <span>Total</span>
-              <span id="totalPrice">0&euro;</span>
-            </div>
+            <div class="booking-summary-row"><span id="nightsLabel">0 nuits</span><span id="nightsPrice">0&euro;</span></div>
+            <div class="booking-summary-row"><span>Frais de ménage</span><span>50&euro;</span></div>
+            <div class="booking-summary-row"><span>Frais de service</span><span id="serviceFee">0&euro;</span></div>
+            <div class="booking-summary-row total"><span>Total</span><span id="totalPrice">0&euro;</span></div>
           </div>
-
           <button class="btn btn-primary" onclick="handleBooking()" style="width:100%;justify-content:center;padding:14px;margin-top:15px;">
             <i class="fas fa-calendar-check"></i> Réserver
           </button>
@@ -354,8 +447,6 @@ function displayPropertyDetail(id) {
   `;
 
   renderCalendar();
-
-  // Set min date to today
   const today = new Date().toISOString().split('T')[0];
   const checkinEl = document.getElementById('detailCheckin');
   const checkoutEl = document.getElementById('detailCheckout');
@@ -365,18 +456,10 @@ function displayPropertyDetail(id) {
 
 function getAmenityIcon(amenity) {
   const icons = {
-    'WiFi': 'fas fa-wifi',
-    'Piscine': 'fas fa-swimming-pool',
-    'Parking': 'fas fa-parking',
-    'Climatisation': 'fas fa-snowflake',
-    'Cuisine équipée': 'fas fa-utensils',
-    'Lave-linge': 'fas fa-tshirt',
-    'Jardin': 'fas fa-leaf',
-    'Terrasse': 'fas fa-sun',
-    'BBQ': 'fas fa-fire',
-    'Vue mer': 'fas fa-water',
-    'Animaux acceptés': 'fas fa-paw',
-    'Cheminée': 'fas fa-fire-alt',
+    'WiFi': 'fas fa-wifi', 'Piscine': 'fas fa-swimming-pool', 'Parking': 'fas fa-parking',
+    'Climatisation': 'fas fa-snowflake', 'Cuisine équipée': 'fas fa-utensils', 'Lave-linge': 'fas fa-tshirt',
+    'Jardin': 'fas fa-leaf', 'Terrasse': 'fas fa-sun', 'BBQ': 'fas fa-fire',
+    'Vue mer': 'fas fa-water', 'Animaux acceptés': 'fas fa-paw', 'Cheminée': 'fas fa-fire-alt',
     'Vue montagne': 'fas fa-mountain'
   };
   return icons[amenity] || 'fas fa-check';
@@ -394,103 +477,51 @@ function renderCalendar() {
   const container = document.getElementById('calendarWidget');
   if (!container || !currentProperty) return;
 
-  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin',
-    'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+  const monthNames = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
   const dayNames = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
-
   const firstDay = new Date(currentYear, currentMonth, 1);
   const lastDay = new Date(currentYear, currentMonth + 1, 0);
-  const startDay = (firstDay.getDay() + 6) % 7; // Monday = 0
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const startDay = (firstDay.getDay() + 6) % 7;
+  const today = new Date(); today.setHours(0, 0, 0, 0);
 
-  let html = `
-    <div class="calendar-header">
-      <h3>${monthNames[currentMonth]} ${currentYear}</h3>
-      <div class="calendar-nav">
-        <button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button>
-        <button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button>
-      </div>
-    </div>
-    <div class="calendar-grid">
-  `;
+  let html = `<div class="calendar-header"><h3>${monthNames[currentMonth]} ${currentYear}</h3><div class="calendar-nav"><button onclick="changeMonth(-1)"><i class="fas fa-chevron-left"></i></button><button onclick="changeMonth(1)"><i class="fas fa-chevron-right"></i></button></div></div><div class="calendar-grid">`;
+  dayNames.forEach(d => { html += `<div class="calendar-day-name">${d}</div>`; });
+  for (let i = 0; i < startDay; i++) html += `<div class="calendar-day empty"></div>`;
 
-  dayNames.forEach(d => {
-    html += `<div class="calendar-day-name">${d}</div>`;
-  });
-
-  // Empty cells before first day
-  for (let i = 0; i < startDay; i++) {
-    html += `<div class="calendar-day empty"></div>`;
-  }
-
-  // Days of month
   for (let day = 1; day <= lastDay.getDate(); day++) {
     const date = new Date(currentYear, currentMonth, day);
     const dateStr = date.toISOString().split('T')[0];
     let classes = 'calendar-day';
-
     const isPast = date < today;
     const isBooked = isDateBooked(dateStr);
-    const isToday = date.getTime() === today.getTime();
-
-    if (isPast) {
-      classes += ' disabled';
-    } else if (isBooked) {
-      classes += ' booked';
-    }
-
-    if (isToday) classes += ' today';
-
+    if (isPast) classes += ' disabled';
+    else if (isBooked) classes += ' booked';
+    if (date.getTime() === today.getTime()) classes += ' today';
     if (selectedCheckIn && dateStr === selectedCheckIn) classes += ' selected';
     if (selectedCheckOut && dateStr === selectedCheckOut) classes += ' selected';
-    if (selectedCheckIn && selectedCheckOut) {
-      if (dateStr > selectedCheckIn && dateStr < selectedCheckOut) {
-        classes += ' in-range';
-      }
-    }
-
-    const clickHandler = (!isPast && !isBooked)
-      ? `onclick="selectCalendarDate('${dateStr}')"`
-      : '';
-
-    html += `<div class="${classes}" ${clickHandler}>${day}</div>`;
+    if (selectedCheckIn && selectedCheckOut && dateStr > selectedCheckIn && dateStr < selectedCheckOut) classes += ' in-range';
+    const click = (!isPast && !isBooked) ? `onclick="selectCalendarDate('${dateStr}')"` : '';
+    html += `<div class="${classes}" ${click}>${day}</div>`;
   }
 
-  html += `</div>
-    <div class="calendar-legend">
-      <span><div class="legend-dot available"></div> Disponible</span>
-      <span><div class="legend-dot booked"></div> Réservé</span>
-      <span><div class="legend-dot selected"></div> Sélection</span>
-    </div>
-  `;
-
+  html += `</div><div class="calendar-legend"><span><div class="legend-dot available"></div> Disponible</span><span><div class="legend-dot booked"></div> Réservé</span><span><div class="legend-dot selected"></div> Sélection</span></div>`;
   container.innerHTML = html;
 }
 
 function isDateBooked(dateStr) {
-  if (!currentProperty) return false;
-  return currentProperty.bookedDates.some(range => {
-    return dateStr >= range.start && dateStr <= range.end;
-  });
+  return bookedRanges.some(range => dateStr >= range.start && dateStr <= range.end);
 }
 
 function changeMonth(delta) {
   currentMonth += delta;
-  if (currentMonth > 11) {
-    currentMonth = 0;
-    currentYear++;
-  } else if (currentMonth < 0) {
-    currentMonth = 11;
-    currentYear--;
-  }
+  if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+  else if (currentMonth < 0) { currentMonth = 11; currentYear--; }
   renderCalendar();
 }
 
 function selectCalendarDate(dateStr) {
   if (!selectedCheckIn || (selectedCheckIn && selectedCheckOut)) {
-    selectedCheckIn = dateStr;
-    selectedCheckOut = null;
+    selectedCheckIn = dateStr; selectedCheckOut = null;
     document.getElementById('detailCheckin').value = dateStr;
     document.getElementById('detailCheckout').value = '';
   } else {
@@ -498,22 +529,14 @@ function selectCalendarDate(dateStr) {
       selectedCheckIn = dateStr;
       document.getElementById('detailCheckin').value = dateStr;
     } else {
-      // Check no booked dates in range
-      const hasBookedInRange = currentProperty.bookedDates.some(range => {
-        return (range.start > selectedCheckIn && range.start < dateStr) ||
-               (range.end > selectedCheckIn && range.end < dateStr);
-      });
-
-      if (hasBookedInRange) {
-        showToast('Des dates dans cette plage sont déjà réservées', 'error');
-        return;
-      }
-
+      const hasBookedInRange = bookedRanges.some(range =>
+        (range.start > selectedCheckIn && range.start < dateStr) || (range.end > selectedCheckIn && range.end < dateStr)
+      );
+      if (hasBookedInRange) { showToast('Des dates dans cette plage sont déjà réservées', 'error'); return; }
       selectedCheckOut = dateStr;
       document.getElementById('detailCheckout').value = dateStr;
     }
   }
-
   renderCalendar();
   updateBookingTotal();
 }
@@ -525,224 +548,256 @@ function updateBookingTotal() {
   const checkin = document.getElementById('detailCheckin')?.value;
   const checkout = document.getElementById('detailCheckout')?.value;
   const summarySection = document.getElementById('bookingSummarySection');
-
-  if (!checkin || !checkout || !currentProperty) {
-    if (summarySection) summarySection.style.display = 'none';
-    return;
-  }
-
+  if (!checkin || !checkout || !currentProperty) { if (summarySection) summarySection.style.display = 'none'; return; }
   const nights = Math.ceil((new Date(checkout) - new Date(checkin)) / (1000 * 60 * 60 * 24));
-  if (nights <= 0) {
-    if (summarySection) summarySection.style.display = 'none';
-    return;
-  }
-
+  if (nights <= 0) { if (summarySection) summarySection.style.display = 'none'; return; }
   const nightsTotal = nights * currentProperty.pricePerNight;
-  const cleaningFee = 50;
   const serviceFee = Math.round(nightsTotal * 0.05);
-  const total = nightsTotal + cleaningFee + serviceFee;
-
+  const total = nightsTotal + 50 + serviceFee;
   if (summarySection) summarySection.style.display = 'block';
   document.getElementById('nightsLabel').textContent = `${nights} nuit${nights > 1 ? 's' : ''} x ${currentProperty.pricePerNight}\u20AC`;
   document.getElementById('nightsPrice').textContent = `${nightsTotal}\u20AC`;
   document.getElementById('serviceFee').textContent = `${serviceFee}\u20AC`;
   document.getElementById('totalPrice').textContent = `${total}\u20AC`;
-
-  // Sync calendar selection
-  selectedCheckIn = checkin;
-  selectedCheckOut = checkout;
-  renderCalendar();
+  selectedCheckIn = checkin; selectedCheckOut = checkout; renderCalendar();
 }
 
 function handleBooking() {
+  if (!getToken()) { showToast('Connectez-vous pour réserver', 'error'); openModal('loginModal'); return; }
   const checkin = document.getElementById('detailCheckin')?.value;
   const checkout = document.getElementById('detailCheckout')?.value;
-  const guests = document.getElementById('detailGuests')?.value;
-
-  if (!checkin || !checkout) {
-    showToast('Veuillez sélectionner vos dates de séjour', 'error');
-    return;
-  }
-
+  if (!checkin || !checkout) { showToast('Veuillez sélectionner vos dates', 'error'); return; }
   const nights = Math.ceil((new Date(checkout) - new Date(checkin)) / (1000 * 60 * 60 * 24));
-  if (nights <= 0) {
-    showToast('La date de départ doit être après la date d\'arrivée', 'error');
-    return;
-  }
-
+  if (nights <= 0) { showToast('La date de départ doit être après l\'arrivée', 'error'); return; }
   const nightsTotal = nights * currentProperty.pricePerNight;
-  const serviceFee = Math.round(nightsTotal * 0.05);
-  const total = nightsTotal + 50 + serviceFee;
+  const total = nightsTotal + 50 + Math.round(nightsTotal * 0.05);
+  const guests = document.getElementById('detailGuests')?.value;
 
   const summary = document.getElementById('bookingSummary');
   if (summary) {
     summary.innerHTML = `
-      <div style="margin-bottom:15px">
-        <strong>${currentProperty.title}</strong><br>
-        <span style="color: var(--gray-500)">${currentProperty.address}</span>
-      </div>
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px">
+      <div style="margin-bottom:15px"><strong>${currentProperty.title}</strong><br><span style="color:#888">${currentProperty.address || currentProperty.location}</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:15px">
         <div><strong>Arrivée:</strong> ${formatDate(checkin)}</div>
         <div><strong>Départ:</strong> ${formatDate(checkout)}</div>
         <div><strong>Voyageurs:</strong> ${guests}</div>
         <div><strong>Nuits:</strong> ${nights}</div>
-      </div>
-    `;
+      </div>`;
   }
-
   const bookingTotal = document.getElementById('bookingTotal');
-  if (bookingTotal) {
-    bookingTotal.innerHTML = `Total: <strong>${total}&euro;</strong>`;
-  }
-
+  if (bookingTotal) bookingTotal.innerHTML = `Total: <strong>${total}&euro;</strong>`;
   openModal('bookingModal');
 }
 
-function confirmBooking(event) {
+async function confirmBooking(event) {
   event.preventDefault();
-  closeModal('bookingModal');
-  showToast('Réservation confirmée ! Vous recevrez un email de confirmation.');
+  const checkin = document.getElementById('detailCheckin')?.value;
+  const checkout = document.getElementById('detailCheckout')?.value;
+  const guests = parseInt(document.getElementById('detailGuests')?.value || 1);
+  const nights = Math.ceil((new Date(checkout) - new Date(checkin)) / (1000 * 60 * 60 * 24));
+  const nightsTotal = nights * currentProperty.pricePerNight;
+  const total = nightsTotal + 50 + Math.round(nightsTotal * 0.05);
 
-  // Reset
-  document.getElementById('detailCheckin').value = '';
-  document.getElementById('detailCheckout').value = '';
-  selectedCheckIn = null;
-  selectedCheckOut = null;
-  document.getElementById('bookingSummarySection').style.display = 'none';
-  renderCalendar();
+  try {
+    const res = await fetch(API_URL + '/bookings', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({
+        property: currentProperty._id,
+        checkInDate: checkin,
+        checkOutDate: checkout,
+        numberOfGuests: guests,
+        totalPrice: total,
+        specialRequests: document.getElementById('specialRequests')?.value || ''
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    closeModal('bookingModal');
+    showToast('Réservation confirmée !');
+    document.getElementById('detailCheckin').value = '';
+    document.getElementById('detailCheckout').value = '';
+    selectedCheckIn = null; selectedCheckOut = null;
+    document.getElementById('bookingSummarySection').style.display = 'none';
+    // Refresh booked dates
+    const bRes = await fetch(API_URL + '/bookings/property/' + currentProperty._id);
+    const bookings = await bRes.json();
+    bookedRanges = bookings.map(b => ({ start: b.checkInDate.split('T')[0], end: b.checkOutDate.split('T')[0] }));
+    renderCalendar();
+  } catch (err) {
+    showToast(err.message || 'Erreur de réservation', 'error');
+  }
 }
 
 // ============================================
-// Auth
+// Dashboard (Espace Propriétaire)
 // ============================================
-function handleLogin(event) {
-  event.preventDefault();
-  const email = document.getElementById('loginEmail').value;
-  closeModal('loginModal');
-  showToast(`Bienvenue ! Connecté en tant que ${email}`);
-}
+async function loadDashboard() {
+  const user = getUser();
+  if (!user) { window.location.href = 'index.html'; return; }
 
-function handleRegister(event) {
-  event.preventDefault();
-  const firstName = document.getElementById('regFirstName').value;
-  closeModal('registerModal');
-  showToast(`Inscription réussie ! Bienvenue ${firstName}`);
-}
+  // Load my properties
+  let myProperties = [];
+  try {
+    const res = await fetch(API_URL + '/properties/mine', { headers: authHeaders() });
+    myProperties = await res.json();
+  } catch (err) { myProperties = []; }
 
-// ============================================
-// Dashboard
-// ============================================
-function loadDashboard() {
+  // Load my bookings
+  let myBookings = [];
+  try {
+    const res = await fetch(API_URL + '/bookings/mine', { headers: authHeaders() });
+    myBookings = await res.json();
+  } catch (err) { myBookings = []; }
+
   // Stats
   const totalProps = document.getElementById('totalProperties');
   const totalBook = document.getElementById('totalBookings');
   const totalRev = document.getElementById('totalRevenue');
   const avgRat = document.getElementById('avgRating');
-
-  if (totalProps) totalProps.textContent = PROPERTIES_DATA.length;
-  if (totalBook) totalBook.textContent = BOOKINGS_DATA.length;
+  if (totalProps) totalProps.textContent = myProperties.length;
+  if (totalBook) totalBook.textContent = myBookings.length;
   if (totalRev) {
-    const revenue = BOOKINGS_DATA
-      .filter(b => b.status !== 'cancelled')
-      .reduce((sum, b) => sum + b.totalPrice, 0);
+    const revenue = myBookings.filter(b => b.status !== 'cancelled').reduce((sum, b) => sum + (b.totalPrice || 0), 0);
     totalRev.textContent = revenue.toLocaleString('fr-FR') + ' \u20AC';
   }
   if (avgRat) {
-    const avg = PROPERTIES_DATA.reduce((sum, p) => sum + p.rating, 0) / PROPERTIES_DATA.length;
-    avgRat.textContent = avg.toFixed(1);
+    const ratings = myProperties.filter(p => p.rating > 0);
+    avgRat.textContent = ratings.length > 0 ? (ratings.reduce((sum, p) => sum + p.rating, 0) / ratings.length).toFixed(1) : '-';
   }
 
-  // My Properties
+  // My Properties list
   const propsList = document.getElementById('myPropertiesList');
   if (propsList) {
-    propsList.innerHTML = PROPERTIES_DATA.map(p => `
-      <div class="my-property-item">
-        <img src="${p.images[0]}" alt="${p.title}">
-        <div class="my-property-info">
-          <h3>${p.title}</h3>
-          <p><i class="fas fa-map-marker-alt"></i> ${p.address} &middot; ${p.pricePerNight}&euro;/nuit &middot; <i class="fas fa-star" style="color:var(--secondary)"></i> ${p.rating}</p>
-        </div>
-        <div class="my-property-actions">
-          <button class="btn-edit" onclick="window.location.href='property.html?id=${p.id}'">
-            <i class="fas fa-eye"></i> Voir
-          </button>
-          <button class="btn-edit" onclick="showToast('Modification en cours...')">
-            <i class="fas fa-edit"></i> Modifier
-          </button>
-          <button class="btn-delete" onclick="showToast('Propriété supprimée', 'error')">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    `).join('');
+    if (myProperties.length === 0) {
+      propsList.innerHTML = '<p style="text-align:center;padding:40px;color:#888;">Vous n\'avez pas encore d\'annonce. Créez votre première annonce !</p>';
+    } else {
+      propsList.innerHTML = myProperties.map(p => {
+        const img = p.images && p.images.length > 0 ? p.images[0] : 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=800';
+        return `
+          <div class="my-property-item">
+            <img src="${img}" alt="${p.title}">
+            <div class="my-property-info">
+              <h3>${p.title}</h3>
+              <p><i class="fas fa-map-marker-alt"></i> ${p.address || p.location} &middot; ${p.pricePerNight}&euro;/nuit</p>
+            </div>
+            <div class="my-property-actions">
+              <button class="btn-edit" onclick="window.location.href='property.html?id=${p._id}'"><i class="fas fa-eye"></i> Voir</button>
+              <button class="btn-delete" onclick="deleteProperty('${p._id}')"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>`;
+      }).join('');
+    }
   }
 
-  // Bookings Table
+  // Bookings table
   const bookingsBody = document.getElementById('bookingsTableBody');
   if (bookingsBody) {
-    bookingsBody.innerHTML = BOOKINGS_DATA.map(b => {
-      const statusLabels = { pending: 'En attente', confirmed: 'Confirmée', cancelled: 'Annulée' };
-      return `
-        <tr>
-          <td>${b.propertyTitle}</td>
-          <td>${b.guestName}</td>
-          <td>${formatDate(b.checkIn)}</td>
-          <td>${formatDate(b.checkOut)}</td>
-          <td><strong>${b.totalPrice.toLocaleString('fr-FR')}&euro;</strong></td>
-          <td><span class="status-badge ${b.status}">${statusLabels[b.status]}</span></td>
-          <td>
-            ${b.status === 'pending' ? `
-              <button class="btn-edit btn-sm" onclick="showToast('Réservation confirmée')"><i class="fas fa-check"></i></button>
-              <button class="btn-delete btn-sm" onclick="showToast('Réservation annulée', 'error')"><i class="fas fa-times"></i></button>
-            ` : ''}
-          </td>
-        </tr>
-      `;
-    }).join('');
+    if (myBookings.length === 0) {
+      bookingsBody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:30px;color:#888;">Aucune réservation</td></tr>';
+    } else {
+      bookingsBody.innerHTML = myBookings.map(b => {
+        const statusLabels = { pending: 'En attente', confirmed: 'Confirmée', cancelled: 'Annulée' };
+        const guestName = b.guest ? (b.guest.firstName + ' ' + b.guest.lastName) : 'Voyageur';
+        const propTitle = b.property ? b.property.title : 'Propriété';
+        return `<tr>
+          <td>${propTitle}</td>
+          <td>${guestName}</td>
+          <td>${formatDate(b.checkInDate)}</td>
+          <td>${formatDate(b.checkOutDate)}</td>
+          <td><strong>${(b.totalPrice || 0).toLocaleString('fr-FR')}&euro;</strong></td>
+          <td><span class="status-badge ${b.status}">${statusLabels[b.status] || b.status}</span></td>
+          <td>${b.status === 'pending' ? `<button class="btn-edit btn-sm" onclick="updateBookingStatus('${b._id}','confirmed')"><i class="fas fa-check"></i></button><button class="btn-delete btn-sm" onclick="updateBookingStatus('${b._id}','cancelled')"><i class="fas fa-times"></i></button>` : ''}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+}
+
+async function deleteProperty(id) {
+  if (!confirm('Supprimer cette annonce ?')) return;
+  try {
+    const res = await fetch(API_URL + '/properties/' + id, { method: 'DELETE', headers: authHeaders() });
+    if (!res.ok) throw new Error('Erreur suppression');
+    showToast('Annonce supprimée');
+    loadDashboard();
+  } catch (err) {
+    showToast(err.message, 'error');
+  }
+}
+
+async function updateBookingStatus(id, status) {
+  try {
+    const res = await fetch(API_URL + '/bookings/' + id, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify({ status })
+    });
+    if (!res.ok) throw new Error('Erreur');
+    showToast(status === 'confirmed' ? 'Réservation confirmée' : 'Réservation annulée');
+    loadDashboard();
+  } catch (err) {
+    showToast(err.message, 'error');
   }
 }
 
 function showTab(tabId) {
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-
   document.getElementById(tabId)?.classList.add('active');
   event.target.classList.add('active');
 }
 
-function handleAddProperty(event) {
+async function handleAddProperty(event) {
   event.preventDefault();
-
   const amenities = [];
-  document.querySelectorAll('.amenities-checkboxes input:checked').forEach(cb => {
-    amenities.push(cb.value);
-  });
+  document.querySelectorAll('.amenities-checkboxes input:checked').forEach(cb => amenities.push(cb.value));
 
-  const newProperty = {
+  const imagesRaw = document.getElementById('propImages').value.trim();
+  const images = imagesRaw ? imagesRaw.split('\n').map(u => u.trim()).filter(u => u) : [];
+
+  const body = {
     title: document.getElementById('propTitle').value,
     description: document.getElementById('propDescription').value,
     location: document.getElementById('propLocation').value,
+    address: document.getElementById('propAddress')?.value || document.getElementById('propLocation').value,
     pricePerNight: parseInt(document.getElementById('propPrice').value),
+    price: parseInt(document.getElementById('propPrice').value),
     bedrooms: parseInt(document.getElementById('propBedrooms').value),
     bathrooms: parseInt(document.getElementById('propBathrooms').value),
     guests: parseInt(document.getElementById('propGuests').value),
-    amenities
+    amenities,
+    images
   };
 
-  console.log('Nouvelle propriété:', newProperty);
-  showToast('Annonce publiée avec succès !');
-  event.target.reset();
+  try {
+    const res = await fetch(API_URL + '/properties', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
 
-  // Switch to properties tab
-  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('myProperties')?.classList.add('active');
-  document.querySelector('.tab-btn')?.classList.add('active');
+    showToast('Annonce publiée avec succès !');
+    event.target.reset();
+
+    // Switch to properties tab
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('myProperties')?.classList.add('active');
+    document.querySelector('.tab-btn')?.classList.add('active');
+    loadDashboard();
+  } catch (err) {
+    showToast(err.message || 'Erreur lors de la publication', 'error');
+  }
 }
 
 // ============================================
 // Init
 // ============================================
 document.addEventListener('DOMContentLoaded', () => {
+  updateNavbar();
   displayFeaturedProperties();
 });
