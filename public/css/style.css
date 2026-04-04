@@ -1448,6 +1448,59 @@ input, select, textarea { font-family: inherit; }
 .mt-3 { margin-top: 30px; }
 
 /* ========================================
+   QUICK FILTERS (Booking.com style chips)
+   ======================================== */
+.quick-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 0 5px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: var(--white);
+  border: 2px solid var(--gray-300);
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.filter-chip i {
+  font-size: 0.95rem;
+  color: var(--gray-500);
+  transition: var(--transition);
+}
+
+.filter-chip:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.filter-chip:hover i {
+  color: var(--primary);
+}
+
+.filter-chip.active {
+  background: var(--primary);
+  color: var(--white);
+  border-color: var(--primary);
+}
+
+.filter-chip.active i {
+  color: var(--white);
+}
+
+/* ========================================
    FILTERS BAR
    ======================================== */
 .filters-bar {

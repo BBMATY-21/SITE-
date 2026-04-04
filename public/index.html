@@ -39,19 +39,19 @@
   <section class="hero">
     <div class="hero-content">
       <h1>Trouvez votre maison de vacances idéale</h1>
-      <p>Des milliers de locations saisonnières pour des séjours inoubliables</p>
+      <p>Locations saisonnières entre particuliers pour des séjours inoubliables</p>
       <div class="hero-stats">
         <div class="stat">
-          <span class="stat-number">500+</span>
-          <span class="stat-label">Propriétés</span>
+          <span class="stat-number" id="statProperties">-</span>
+          <span class="stat-label">Annonces</span>
         </div>
         <div class="stat">
-          <span class="stat-number">200+</span>
-          <span class="stat-label">Destinations</span>
+          <span class="stat-number" id="statDestinations">7</span>
+          <span class="stat-label">Régions</span>
         </div>
         <div class="stat">
-          <span class="stat-number">10k+</span>
-          <span class="stat-label">Voyageurs heureux</span>
+          <span class="stat-number" id="statHosts">-</span>
+          <span class="stat-label">Hôtes</span>
         </div>
       </div>
     </div>
@@ -61,41 +61,41 @@
   <section class="section">
     <div class="container">
       <h2 class="section-title">Destinations populaires</h2>
-      <div class="destinations-grid">
+      <div class="destinations-grid" id="destinationsGrid">
         <div class="destination-card" onclick="filterByLocation('Côte d\'Azur')">
           <div class="destination-img" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
             <i class="fas fa-umbrella-beach"></i>
           </div>
           <h3>Côte d'Azur</h3>
-          <p>42 propriétés</p>
+          <p class="dest-count" data-region="Côte d'Azur">0 annonces</p>
         </div>
         <div class="destination-card" onclick="filterByLocation('Alpes')">
           <div class="destination-img" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
             <i class="fas fa-mountain"></i>
           </div>
           <h3>Alpes</h3>
-          <p>38 propriétés</p>
+          <p class="dest-count" data-region="Alpes">0 annonces</p>
         </div>
         <div class="destination-card" onclick="filterByLocation('Bretagne')">
           <div class="destination-img" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
             <i class="fas fa-water"></i>
           </div>
           <h3>Bretagne</h3>
-          <p>25 propriétés</p>
+          <p class="dest-count" data-region="Bretagne">0 annonces</p>
         </div>
         <div class="destination-card" onclick="filterByLocation('Provence')">
           <div class="destination-img" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
             <i class="fas fa-sun"></i>
           </div>
           <h3>Provence</h3>
-          <p>31 propriétés</p>
+          <p class="dest-count" data-region="Provence">0 annonces</p>
         </div>
         <div class="destination-card" onclick="filterByLocation('Corse')">
           <div class="destination-img" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-            <i class="fas fa-island-tropical"></i>
+            <i class="fas fa-tree"></i>
           </div>
           <h3>Corse</h3>
-          <p>18 propriétés</p>
+          <p class="dest-count" data-region="Corse">0 annonces</p>
         </div>
       </div>
     </div>

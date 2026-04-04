@@ -229,6 +229,22 @@ async function displayFeaturedProperties() {
 
   await loadProperties();
 
+  // Update hero stats dynamically
+  const statProps = document.getElementById('statProperties');
+  const statHosts = document.getElementById('statHosts');
+  if (statProps) statProps.textContent = PROPERTIES_DATA.length;
+  if (statHosts) {
+    const uniqueOwners = new Set(PROPERTIES_DATA.map(p => p.owner?._id || p.owner).filter(Boolean));
+    statHosts.textContent = uniqueOwners.size;
+  }
+
+  // Update destination counts
+  document.querySelectorAll('.dest-count').forEach(el => {
+    const region = el.dataset.region;
+    const count = PROPERTIES_DATA.filter(p => p.location === region).length;
+    el.textContent = count + ' annonce' + (count > 1 ? 's' : '');
+  });
+
   if (PROPERTIES_DATA.length === 0) {
     container.innerHTML = '<p style="text-align:center;grid-column:1/-1;padding:40px;color:#888;">Aucune annonce pour le moment. Soyez le premier à publier !</p>';
     return;
@@ -272,12 +288,20 @@ function applyFilters() {
   const minBedrooms = parseInt(document.getElementById('filterBedrooms')?.value || 0);
   const minGuests = parseInt(document.getElementById('filterGuests')?.value || 0);
   const sortBy = document.getElementById('sortBy')?.value || 'default';
+  const requiredAmenities = getActiveAmenities();
 
   let filtered = PROPERTIES_DATA.filter(p => {
     if (location && p.location !== location) return false;
     if (p.pricePerNight > maxPrice) return false;
     if (p.bedrooms < minBedrooms) return false;
     if (p.guests < minGuests) return false;
+    // Check all required amenities are present
+    if (requiredAmenities.length > 0) {
+      const propAmenities = p.amenities || [];
+      for (const req of requiredAmenities) {
+        if (!propAmenities.includes(req)) return false;
+      }
+    }
     return true;
   });
 
@@ -288,6 +312,19 @@ function applyFilters() {
   }
 
   displayAllProperties(filtered);
+}
+
+// ============================================
+// Filter Chips (Booking.com style)
+// ============================================
+function toggleChip(el) {
+  el.classList.toggle('active');
+  applyFilters();
+}
+
+function getActiveAmenities() {
+  const chips = document.querySelectorAll('.filter-chip.active');
+  return Array.from(chips).map(c => c.dataset.amenity);
 }
 
 // ============================================

@@ -33,7 +33,23 @@
 
   <section class="section">
     <div class="container">
-      <!-- Filtres -->
+      <!-- Filtres rapides style Booking -->
+      <div class="quick-filters" id="quickFilters">
+        <button class="filter-chip" data-amenity="Piscine" onclick="toggleChip(this)"><i class="fas fa-swimming-pool"></i> Piscine</button>
+        <button class="filter-chip" data-amenity="Animaux acceptés" onclick="toggleChip(this)"><i class="fas fa-dog"></i> Animaux acceptés</button>
+        <button class="filter-chip" data-amenity="Jardin" onclick="toggleChip(this)"><i class="fas fa-leaf"></i> Jardin</button>
+        <button class="filter-chip" data-amenity="WiFi" onclick="toggleChip(this)"><i class="fas fa-wifi"></i> WiFi</button>
+        <button class="filter-chip" data-amenity="Parking" onclick="toggleChip(this)"><i class="fas fa-parking"></i> Parking</button>
+        <button class="filter-chip" data-amenity="Climatisation" onclick="toggleChip(this)"><i class="fas fa-snowflake"></i> Clim</button>
+        <button class="filter-chip" data-amenity="Terrasse" onclick="toggleChip(this)"><i class="fas fa-sun"></i> Terrasse</button>
+        <button class="filter-chip" data-amenity="BBQ" onclick="toggleChip(this)"><i class="fas fa-fire"></i> Barbecue</button>
+        <button class="filter-chip" data-amenity="Vue mer" onclick="toggleChip(this)"><i class="fas fa-water"></i> Vue mer</button>
+        <button class="filter-chip" data-amenity="Cheminée" onclick="toggleChip(this)"><i class="fas fa-fire-alt"></i> Cheminée</button>
+        <button class="filter-chip" data-amenity="Cuisine équipée" onclick="toggleChip(this)"><i class="fas fa-utensils"></i> Cuisine</button>
+        <button class="filter-chip" data-amenity="Lave-linge" onclick="toggleChip(this)"><i class="fas fa-tshirt"></i> Lave-linge</button>
+      </div>
+
+      <!-- Filtres avancés -->
       <div class="filters-bar">
         <div class="filter-group">
           <label>Lieu</label>
