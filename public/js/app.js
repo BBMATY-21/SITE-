@@ -42,6 +42,21 @@ function updateNavbar() {
   document.querySelectorAll('.nav-link-dashboard').forEach(el => {
     el.style.display = user && user.role === 'host' ? '' : 'none';
   });
+  // Fill user menu modal info
+  if (user) {
+    const nameEl = document.getElementById('userMenuName');
+    const emailEl = document.getElementById('userMenuEmail');
+    const avatarEl = document.getElementById('userMenuAvatar');
+    if (nameEl) nameEl.textContent = user.firstName + ' ' + user.lastName;
+    if (emailEl) emailEl.textContent = user.email;
+    if (avatarEl) {
+      if (user.avatar) {
+        avatarEl.innerHTML = `<img src="${user.avatar}" alt="${user.firstName}">`;
+      } else {
+        avatarEl.innerHTML = `<span>${user.firstName[0]}${user.lastName[0]}</span>`;
+      }
+    }
+  }
 }
 
 // ============================================
@@ -416,6 +431,34 @@ async function displayPropertyDetail(id) {
     `).join('');
 
   const ownerName = property.owner ? (property.owner.firstName + ' ' + property.owner.lastName) : 'Propriétaire';
+  const ownerId = property.owner?._id || property.owner;
+  const ownerInitials = property.owner ? (property.owner.firstName[0] + property.owner.lastName[0]) : 'P';
+
+  // Load host profile
+  let hostProfile = null;
+  try {
+    const hRes = await fetch(API_URL + '/users/' + ownerId);
+    if (hRes.ok) hostProfile = await hRes.json();
+  } catch (err) {}
+
+  const hostCardHtml = hostProfile ? `
+    <div class="detail-section host-card">
+      <h2>Votre hôte</h2>
+      <div class="host-profile">
+        <div class="host-avatar-lg">
+          ${hostProfile.avatar ? `<img src="${hostProfile.avatar}" alt="${hostProfile.firstName}">` : `<span>${hostProfile.firstName[0]}${hostProfile.lastName[0]}</span>`}
+        </div>
+        <div class="host-info">
+          <h3>${hostProfile.firstName} ${hostProfile.lastName}</h3>
+          ${hostProfile.bio ? `<p class="host-bio">${hostProfile.bio}</p>` : ''}
+          <div class="host-meta">
+            <span><i class="fas fa-calendar-alt"></i> Membre depuis ${new Date(hostProfile.createdAt).toLocaleDateString('fr-FR', {month:'long', year:'numeric'})}</span>
+            ${hostProfile.phone ? `<span><i class="fas fa-phone"></i> ${hostProfile.phone}</span>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  ` : '';
 
   document.getElementById('propertyDetail').innerHTML = `
     ${imagesHtml}
@@ -434,6 +477,8 @@ async function displayPropertyDetail(id) {
           <h2>Description</h2>
           <p>${property.description}</p>
         </div>
+
+        ${hostCardHtml}
 
         ${amenitiesHtml ? `<div class="detail-section"><h2>Équipements</h2><div class="amenities-list">${amenitiesHtml}</div></div>` : ''}
 
@@ -828,6 +873,75 @@ async function handleAddProperty(event) {
     loadDashboard();
   } catch (err) {
     showToast(err.message || 'Erreur lors de la publication', 'error');
+  }
+}
+
+// ============================================
+// Profile Editing
+// ============================================
+function openProfileModal() {
+  closeModal('userMenuModal');
+  const user = getUser();
+  if (!user) return;
+
+  document.getElementById('profileFirstName').value = user.firstName || '';
+  document.getElementById('profileLastName').value = user.lastName || '';
+  document.getElementById('profilePhone').value = user.phone || '';
+  document.getElementById('profileBio').value = user.bio || '';
+  document.getElementById('profileAvatar').value = user.avatar || '';
+
+  const preview = document.getElementById('profileAvatarPreview');
+  if (preview) {
+    if (user.avatar) {
+      preview.innerHTML = `<img src="${user.avatar}" alt="Avatar">`;
+    } else {
+      preview.innerHTML = `<span>${user.firstName[0]}${user.lastName[0]}</span>`;
+    }
+  }
+
+  setTimeout(() => openModal('profileModal'), 200);
+}
+
+async function handleProfileUpdate(event) {
+  event.preventDefault();
+  const body = {
+    firstName: document.getElementById('profileFirstName').value,
+    lastName: document.getElementById('profileLastName').value,
+    phone: document.getElementById('profilePhone').value,
+    bio: document.getElementById('profileBio').value,
+    avatar: document.getElementById('profileAvatar').value
+  };
+
+  try {
+    const res = await fetch(API_URL + '/users/me', {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message);
+
+    // Update local storage
+    const user = getUser();
+    Object.assign(user, data);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    closeModal('profileModal');
+    showToast('Profil mis à jour !');
+    updateNavbar();
+  } catch (err) {
+    showToast(err.message || 'Erreur de mise à jour', 'error');
+  }
+}
+
+function onAvatarInput() {
+  const url = document.getElementById('profileAvatar').value;
+  const preview = document.getElementById('profileAvatarPreview');
+  const user = getUser();
+  if (url) {
+    preview.innerHTML = `<img src="${url}" alt="Avatar" onerror="this.parentElement.innerHTML='<span>${user.firstName[0]}${user.lastName[0]}</span>'">`;
+  } else {
+    preview.innerHTML = `<span>${user.firstName[0]}${user.lastName[0]}</span>`;
   }
 }
 

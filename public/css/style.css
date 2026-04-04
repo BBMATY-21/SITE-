@@ -2383,3 +2383,97 @@ input, select, textarea { font-family: inherit; }
 
   .amenities-list { grid-template-columns: 1fr; }
 }
+
+/* ========================================
+   PROFILE AVATAR
+   ======================================== */
+.profile-avatar-circle {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--coral));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px;
+  overflow: hidden;
+}
+
+.profile-avatar-circle img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-avatar-circle span {
+  color: white;
+  font-weight: 700;
+  font-size: 1.2rem;
+  text-transform: uppercase;
+}
+
+/* ========================================
+   HOST CARD (property detail)
+   ======================================== */
+.host-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  border: 1px solid #eee;
+}
+
+.host-profile {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.host-avatar-lg {
+  width: 70px;
+  height: 70px;
+  min-width: 70px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--coral));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.host-avatar-lg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.host-avatar-lg span {
+  color: white;
+  font-weight: 700;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+}
+
+.host-info h3 {
+  margin: 0 0 6px;
+  font-size: 1.15rem;
+}
+
+.host-bio {
+  color: #555;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.host-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.host-meta i {
+  margin-right: 5px;
+  color: var(--primary);
+}

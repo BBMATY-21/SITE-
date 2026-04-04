@@ -251,9 +251,38 @@
     <div class="modal-content" style="max-width:350px">
       <span class="modal-close" onclick="closeModal('userMenuModal')">&times;</span>
       <h2>Mon compte</h2>
-      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;margin-top:15px;">
+      <div style="text-align:center;padding:15px 0;">
+        <div class="profile-avatar-circle" id="userMenuAvatar"></div>
+        <p id="userMenuName" style="font-size:1.1rem;font-weight:600;"></p>
+        <p id="userMenuEmail" style="color:#888;margin-top:5px;"></p>
+      </div>
+      <button class="btn btn-full" onclick="openProfileModal()" style="width:100%;padding:12px;background:var(--primary);color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;margin-bottom:10px;">
+        <i class="fas fa-user-edit"></i> Modifier mon profil
+      </button>
+      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">
         <i class="fas fa-sign-out-alt"></i> Déconnexion
       </button>
+    </div>
+  </div>
+
+  <!-- Modal Profil -->
+  <div class="modal" id="profileModal">
+    <div class="modal-content" style="max-width:450px">
+      <span class="modal-close" onclick="closeModal('profileModal')">&times;</span>
+      <h2>Modifier mon profil</h2>
+      <form onsubmit="handleProfileUpdate(event)">
+        <div style="text-align:center;margin-bottom:20px;">
+          <div class="profile-avatar-circle" id="profileAvatarPreview" style="width:80px;height:80px;font-size:1.5rem;margin:0 auto 10px;"></div>
+        </div>
+        <div class="form-group"><label>Photo de profil (URL)</label><input type="url" id="profileAvatar" placeholder="https://exemple.com/photo.jpg" oninput="onAvatarInput()"></div>
+        <div class="form-row">
+          <div class="form-group"><label>Prénom</label><input type="text" id="profileFirstName" required></div>
+          <div class="form-group"><label>Nom</label><input type="text" id="profileLastName" required></div>
+        </div>
+        <div class="form-group"><label>Téléphone</label><input type="tel" id="profilePhone" placeholder="06 12 34 56 78"></div>
+        <div class="form-group"><label>Description</label><textarea id="profileBio" rows="3" placeholder="Parlez un peu de vous..."></textarea></div>
+        <button type="submit" class="btn btn-primary btn-full">Enregistrer</button>
+      </form>
     </div>
   </div>
 
