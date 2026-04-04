@@ -14,15 +14,6 @@
       <a href="index.html" class="logo">
         <i class="fas fa-home"></i> MaisonSeason
       </a>
-      <div class="nav-search">
-        <input type="text" id="searchLocation" placeholder="Destination...">
-        <input type="date" id="searchCheckin" placeholder="Arrivée">
-        <input type="date" id="searchCheckout" placeholder="Départ">
-        <input type="number" id="searchGuests" placeholder="Voyageurs" min="1" max="20">
-        <button class="btn-search" onclick="searchProperties()">
-          <i class="fas fa-search"></i> Rechercher
-        </button>
-      </div>
       <div class="nav-links">
         <a href="index.html" class="active">Accueil</a>
         <a href="properties.html">Annonces</a>
@@ -35,170 +26,112 @@
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="hero-content">
-      <h1>Trouvez votre maison de vacances idéale</h1>
-      <p>Locations saisonnières entre particuliers pour des séjours inoubliables</p>
-      <div class="hero-stats">
-        <div class="stat">
-          <span class="stat-number" id="statProperties">-</span>
-          <span class="stat-label">Annonces</span>
+  <!-- Hero compact avec recherche -->
+  <section class="hero-compact">
+    <div class="hero-compact-inner">
+      <h1>Trouvez votre location de vacances</h1>
+      <div class="hero-search-bar">
+        <div class="search-field">
+          <i class="fas fa-map-marker-alt"></i>
+          <input type="text" id="searchLocation" placeholder="Où allez-vous ?">
         </div>
-        <div class="stat">
-          <span class="stat-number" id="statDestinations">7</span>
-          <span class="stat-label">Régions</span>
+        <div class="search-field">
+          <i class="fas fa-calendar"></i>
+          <input type="date" id="searchCheckin">
         </div>
-        <div class="stat">
-          <span class="stat-number" id="statHosts">-</span>
-          <span class="stat-label">Hôtes</span>
+        <div class="search-field">
+          <i class="fas fa-calendar-check"></i>
+          <input type="date" id="searchCheckout">
         </div>
+        <div class="search-field search-field-sm">
+          <i class="fas fa-users"></i>
+          <input type="number" id="searchGuests" placeholder="Voyageurs" min="1" max="20">
+        </div>
+        <button class="hero-search-btn" onclick="searchProperties()">
+          <i class="fas fa-search"></i> Rechercher
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Destinations populaires -->
-  <section class="section">
+  <!-- Destinations en bandeau horizontal -->
+  <section class="destinations-strip">
     <div class="container">
-      <h2 class="section-title">Destinations populaires</h2>
-      <div class="destinations-grid" id="destinationsGrid">
-        <div class="destination-card" onclick="filterByLocation('Côte d\'Azur')">
-          <div class="destination-img" style="background: linear-gradient(135deg, #f08a6e 0%, #e07a2f 100%);">
-            <i class="fas fa-umbrella-beach"></i>
-          </div>
-          <h3>Côte d'Azur</h3>
-          <p class="dest-count" data-region="Côte d'Azur">0 annonces</p>
-        </div>
-        <div class="destination-card" onclick="filterByLocation('Alpes')">
-          <div class="destination-img" style="background: linear-gradient(135deg, #38b2ac 0%, #2d9c94 100%);">
-            <i class="fas fa-mountain"></i>
-          </div>
-          <h3>Alpes</h3>
-          <p class="dest-count" data-region="Alpes">0 annonces</p>
-        </div>
-        <div class="destination-card" onclick="filterByLocation('Bretagne')">
-          <div class="destination-img" style="background: linear-gradient(135deg, #4facfe 0%, #38b2ac 100%);">
-            <i class="fas fa-water"></i>
-          </div>
-          <h3>Bretagne</h3>
-          <p class="dest-count" data-region="Bretagne">0 annonces</p>
-        </div>
-        <div class="destination-card" onclick="filterByLocation('Provence')">
-          <div class="destination-img" style="background: linear-gradient(135deg, #f6d365 0%, #e07a2f 100%);">
-            <i class="fas fa-sun"></i>
-          </div>
-          <h3>Provence</h3>
-          <p class="dest-count" data-region="Provence">0 annonces</p>
-        </div>
-        <div class="destination-card" onclick="filterByLocation('Corse')">
-          <div class="destination-img" style="background: linear-gradient(135deg, #f08a6e 0%, #e05c4a 100%);">
-            <i class="fas fa-tree"></i>
-          </div>
-          <h3>Corse</h3>
-          <p class="dest-count" data-region="Corse">0 annonces</p>
-        </div>
+      <div class="destinations-scroll" id="destinationsGrid">
+        <a class="dest-chip" href="properties.html?location=Côte d'Azur">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#f08a6e,#e07a2f)"><i class="fas fa-umbrella-beach"></i></span>
+          <span>Côte d'Azur</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Alpes">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#38b2ac,#2d9c94)"><i class="fas fa-mountain"></i></span>
+          <span>Alpes</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Bretagne">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#4facfe,#38b2ac)"><i class="fas fa-water"></i></span>
+          <span>Bretagne</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Provence">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#f6d365,#e07a2f)"><i class="fas fa-sun"></i></span>
+          <span>Provence</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Corse">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#f08a6e,#e05c4a)"><i class="fas fa-tree"></i></span>
+          <span>Corse</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Normandie">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#a8d8a8,#5ca85c)"><i class="fas fa-leaf"></i></span>
+          <span>Normandie</span>
+        </a>
+        <a class="dest-chip" href="properties.html?location=Dordogne">
+          <span class="dest-chip-icon" style="background:linear-gradient(135deg,#d4a574,#b8834a)"><i class="fas fa-home"></i></span>
+          <span>Dordogne</span>
+        </a>
       </div>
     </div>
   </section>
 
-  <!-- Annonces en vedette -->
-  <section class="section section-gray">
+  <!-- Annonces - visible immédiatement -->
+  <section class="section" style="padding-top:30px;">
     <div class="container">
-      <h2 class="section-title">Annonces en vedette</h2>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;">
+        <h2 class="section-title" style="margin-bottom:0;">Annonces récentes</h2>
+        <a href="properties.html" class="btn btn-primary btn-sm"><i class="fas fa-arrow-right"></i> Tout voir</a>
+      </div>
       <div class="properties-grid" id="featuredProperties">
         <!-- Remplies dynamiquement par JS -->
       </div>
-      <div class="text-center mt-3">
-        <a href="properties.html" class="btn btn-primary">Voir toutes les annonces</a>
-      </div>
     </div>
   </section>
 
-  <!-- Comment ça marche -->
-  <section class="section">
+  <!-- Comment ça marche - version compacte -->
+  <section class="section" style="padding:40px 0;">
     <div class="container">
-      <h2 class="section-title">Comment ça marche ?</h2>
-      <div class="steps-grid">
-        <div class="step-card">
-          <div class="step-icon">
-            <i class="fas fa-search"></i>
-          </div>
-          <h3>1. Recherchez</h3>
-          <p>Explorez nos annonces et trouvez la maison qui vous correspond</p>
+      <div class="steps-inline">
+        <div class="step-inline">
+          <div class="step-inline-icon"><i class="fas fa-search"></i></div>
+          <div><strong>Recherchez</strong><p>Trouvez la maison idéale</p></div>
         </div>
-        <div class="step-card">
-          <div class="step-icon">
-            <i class="fas fa-calendar-check"></i>
-          </div>
-          <h3>2. Réservez</h3>
-          <p>Choisissez vos dates et réservez en quelques clics</p>
+        <div class="step-divider"></div>
+        <div class="step-inline">
+          <div class="step-inline-icon"><i class="fas fa-calendar-check"></i></div>
+          <div><strong>Réservez</strong><p>Choisissez vos dates</p></div>
         </div>
-        <div class="step-card">
-          <div class="step-icon">
-            <i class="fas fa-key"></i>
-          </div>
-          <h3>3. Profitez</h3>
-          <p>Recevez les clés et profitez de vos vacances</p>
+        <div class="step-divider"></div>
+        <div class="step-inline">
+          <div class="step-inline-icon"><i class="fas fa-key"></i></div>
+          <div><strong>Profitez</strong><p>Bonnes vacances !</p></div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Témoignages -->
-  <section class="section section-gray">
-    <div class="container">
-      <h2 class="section-title">Ce que disent nos voyageurs</h2>
-      <div class="testimonials-grid">
-        <div class="testimonial-card">
-          <div class="testimonial-stars">
-            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-          </div>
-          <p>"Expérience incroyable ! La maison était parfaite et la vue magnifique. Nous reviendrons certainement !"</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">ML</div>
-            <div>
-              <strong>Marie L.</strong>
-              <span>Côte d'Azur, Juillet 2025</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-stars">
-            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-          </div>
-          <p>"Le chalet était exactement comme sur les photos. Service impeccable du début à la fin."</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">PD</div>
-            <div>
-              <strong>Pierre D.</strong>
-              <span>Alpes, Décembre 2025</span>
-            </div>
-          </div>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-stars">
-            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="far fa-star"></i>
-          </div>
-          <p>"Très belle propriété en bord de mer. Idéal pour une famille avec enfants. Je recommande !"</p>
-          <div class="testimonial-author">
-            <div class="author-avatar">SB</div>
-            <div>
-              <strong>Sophie B.</strong>
-              <span>Bretagne, Août 2025</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
+  <!-- Footer compact -->
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
         <div class="footer-col">
           <h3><i class="fas fa-home"></i> MaisonSeason</h3>
-          <p>La plateforme de référence pour la location de maisons saisonnières en France.</p>
+          <p>Location de maisons saisonnières en France.</p>
         </div>
         <div class="footer-col">
           <h4>Navigation</h4>
@@ -207,19 +140,11 @@
           <a href="dashboard.html">Espace Hôte</a>
         </div>
         <div class="footer-col">
-          <h4>Aide</h4>
-          <a href="#">Centre d'aide</a>
-          <a href="#">Conditions d'utilisation</a>
-          <a href="#">Politique de confidentialité</a>
-        </div>
-        <div class="footer-col">
           <h4>Contact</h4>
           <p><i class="fas fa-envelope"></i> contact@maisonseason.fr</p>
-          <p><i class="fas fa-phone"></i> +33 1 23 45 67 89</p>
-          <div class="social-links">
+          <div class="social-links" style="margin-top:10px;">
             <a href="#"><i class="fab fa-facebook"></i></a>
             <a href="#"><i class="fab fa-instagram"></i></a>
-            <a href="#"><i class="fab fa-twitter"></i></a>
           </div>
         </div>
       </div>
@@ -306,7 +231,7 @@
       <a href="dashboard.html" class="btn btn-primary btn-full" style="margin-bottom:10px;text-align:center;text-decoration:none;display:block;padding:12px;">
         <i class="fas fa-tachometer-alt"></i> Espace Propriétaire
       </a>
-      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#ef4444;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">
+      <button class="btn btn-full" onclick="handleLogout()" style="width:100%;padding:12px;background:#e05c4a;color:white;border:none;border-radius:8px;cursor:pointer;font-size:1rem;">
         <i class="fas fa-sign-out-alt"></i> Déconnexion
       </button>
     </div>
